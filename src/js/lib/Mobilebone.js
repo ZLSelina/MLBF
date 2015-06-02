@@ -6,6 +6,8 @@
  **/
 MLBF.define('lib.Mobilebone', function(require) {
     var Mobilebone = (function() {
+        var Mobilebone = {},
+            root = this;
 
         if (document.MBLOADED) {
             return 'Don\'t repeat load Mobilebone!';
@@ -36,7 +38,7 @@ MLBF.define('lib.Mobilebone', function(require) {
          *
          * @type string
          **/
-        Mobilebone.VERSION = '2.5.7';
+        Mobilebone.VERSION = '2.6.1';
 
         /**
          * Whether catch attribute of href from element with tag 'a'
@@ -247,6 +249,44 @@ MLBF.define('lib.Mobilebone', function(require) {
                 return false;
             }
 
+            // set animation callback as a method
+            var fun_animationCall = function(page, data) {
+                if (page.flagAniBind == true) return;
+                // do callback when animation start/end
+                ["animationstart", "animationend"].forEach(function(animationkey, index) {
+                    var animition = params_in[animationkey],
+                        webkitkey = "webkit" + animationkey.replace(/^a|s|e/g, function(matchs) {
+                            return matchs.toUpperCase();
+                        });
+                    var animateEventName = isWebkit ? webkitkey : animationkey;
+                    // if it's the out element, hide it when 'animationend'
+                    index && page.addEventListener(animateEventName, function() {
+                        if (this.classList.contains("in") == false) {
+                            this.style.display = "none";
+                            // add on v2.5.5
+                            // move here on v2.5.8
+                            if (this.removeSelf == true) {
+                                this.parentElement.removeChild(this);
+                                this.removeSelf = null;
+                            }
+                        }
+                        this.classList.remove(params(this).form);
+                    });
+                    // bind animation events
+                    if (typeof animition == "string" && params_in.root[animition]) {
+                        page.addEventListener(animateEventName, function() {
+                            data.root[animition].call(data.root, this, this.classList.contains("in") ? "into" : "out", options);
+                        });
+                    } else if (typeof animition == "function") {
+                        page.addEventListener(animateEventName, function() {
+                            animition.call(data.root, this, this.classList.contains("in") ? "into" : "out", options);
+                        });
+                    }
+                    // set a flag
+                    page.flagAniBind = true;
+                });
+            };
+
             if (pageOut != null && pageOut.classList) {
                 // do transition if there are no 'prevent'
                 if (isPreventOut != true) {
@@ -261,7 +301,11 @@ MLBF.define('lib.Mobilebone', function(require) {
                     pageOut.classList[back ? "add" : "remove"]("reverse");
 
                     // add on v2.5.5
-                    pageOut.removeSelf = null;
+                    pageOut.removeSelf = pageOut.removeSelf || null;
+
+                    // set animation callback for 'pageInto'
+                    // for issues #153
+                    fun_animationCall(pageOut, params_out);
 
                     // do fallback every time
                     var fallback = params_out.fallback;
@@ -277,7 +321,7 @@ MLBF.define('lib.Mobilebone', function(require) {
                     first_page = document.querySelector("." + this.classPage);
 
                 // do title change  
-                if (title) {
+                if (title && options.title !== false) {
                     document.title = title;
                     if (header) {
                         header.innerHTML = title;
@@ -296,7 +340,8 @@ MLBF.define('lib.Mobilebone', function(require) {
                     pageid = pageid.split("?")[0];
                 }
                 var relid = store["_" + pageid];
-                if (options.remove !== false && store[pageid] && store[pageid] != pageInto && store[pageid].parentElement) {
+
+                if (options.remove !== false && store[pageid] && store[pageid] != pageInto) {
                     // hashid may store the same page, we should delete also
                     // when data-reload not 'false' or null
                     // v2.4.4+
@@ -304,8 +349,14 @@ MLBF.define('lib.Mobilebone', function(require) {
                         delete store[relid];
                         delete store["_" + pageid];
                     }
+
+                    if (options.reload == true) {
+                        // v2.5.8 for issues #147
+                        pageInto.removeSelf = true;
+                    }
+
                     if (store[pageid] != pageOut) {
-                        store[pageid].parentElement.removeChild(store[pageid]);
+                        store[pageid].parentElement && store[pageid].parentElement.removeChild(store[pageid]);
                     } else {
                         pageOut.removeSelf = true;
                     }
@@ -343,39 +394,8 @@ MLBF.define('lib.Mobilebone', function(require) {
                     pageInto.firstintoBind = true;
                 }
 
-                // do callback when animation start/end
-                ["animationstart", "animationend"].forEach(function(animationkey, index) {
-                    var animition = params_in[animationkey],
-                        webkitkey = "webkit" + animationkey.replace(/^a|s|e/g, function(matchs) {
-                            return matchs.toUpperCase();
-                        });
-                    if (!store[pageid]) {
-                        var animateEventName = isWebkit ? webkitkey : animationkey;
-                        // if it's the out element, hide it when 'animationend'
-                        index && pageInto.addEventListener(animateEventName, function() {
-                            if (this.classList.contains("in") == false) {
-                                this.style.display = "none";
-                            }
-                            this.classList.remove(params(this).form);
-
-                            // add on v2.5.5
-                            if (this.removeSelf == true) {
-                                this.parentElement.removeChild(this);
-                                this.removeSelf = null;
-                            }
-                        });
-                        // bind animation events
-                        if (typeof animition == "string" && params_in.root[animition]) {
-                            pageInto.addEventListener(animateEventName, function() {
-                                params_in.root[animition].call(params_in.root, this, this.classList.contains("in") ? "into" : "out", options);
-                            });
-                        } else if (typeof animition == "function") {
-                            pageInto.addEventListener(animateEventName, function() {
-                                animition.call(params_in.root, this, this.classList.contains("in") ? "into" : "out", options);
-                            });
-                        }
-                    }
-                });
+                // set animation callback for 'pageInto'
+                fun_animationCall(pageInto, params_in);
 
                 // history
                 // hashid should a full url address
@@ -479,7 +499,15 @@ MLBF.define('lib.Mobilebone', function(require) {
                     } else {
                         // a element
                         href = trigger.getAttribute("href");
-                        formdata = trigger.getAttribute("data-formdata") || trigger.getAttribute("data-data");
+                        formdata = trigger.getAttribute("data-formdata") || trigger.getAttribute("data-data") || "";
+                        // v2.6.1 for #107
+                        // remember container when refresh
+                        var str_container = "container",
+                            attr_container = trigger.getAttribute("data-" + str_container);
+                        if (formdata.indexOf(str_container) == -1 && attr_container) {
+                            var query_container = str_container + "=" + attr_container;
+                            formdata = formdata ? formdata + "&" + query_container : query_container;
+                        }
                     }
                 } else if (trigger.url) {
                     href = trigger.url;
@@ -584,6 +612,11 @@ MLBF.define('lib.Mobilebone', function(require) {
                     // v2.5.2
                     // is back? for issues #128
                     optionsTransition.back = eleOrObj.getAttribute("data-rel") == "back";
+
+                    // v2.6.0 history
+                    if (eleOrObj.getAttribute("data-history") == "false") {
+                        optionsTransition.history = false;
+                    }
                 } else {
                     response = eleOrObj.response || options.response;
                     page_title = eleOrObj.title || options.title;
@@ -664,6 +697,9 @@ MLBF.define('lib.Mobilebone', function(require) {
                 }
                 if (typeof options.target != "undefined") {
                     optionsTransition.target = options.target;
+                }
+                if (typeof options.title != "undefined") {
+                    optionsTransition.title = options.title;
                 }
             }
             if (classPage == classPageInside) {
@@ -765,6 +801,17 @@ MLBF.define('lib.Mobilebone', function(require) {
                     params.type = aOrFormOrObj.method;
 
                     formData = new FormData(aOrFormOrObj);
+                } else if (tagName == "a") {
+                    // v2.5.8 for issues #157
+                    var idContainer = aOrFormOrObj.getAttribute("data-container"),
+                        classPageInside = aOrFormOrObj.getAttribute("data-classpage"),
+                        container = idContainer && document.getElementById(idContainer);
+                    if (container && classPageInside && classPageInside != Mobilebone.classPage) {
+                        // inner ajax no history change
+                        params.history = false;
+                        // title do not change
+                        params.title = false;
+                    }
                 }
 
                 // get mask element
@@ -787,14 +834,17 @@ MLBF.define('lib.Mobilebone', function(require) {
                 // is back? for issues #128
                 // when history.back()
                 params.back = aOrFormOrObj.back;
+                // v2.6.1
+                params.container = aOrFormOrObj.container;
             } else {
                 return;
             }
 
             // do ajax
             // get mask and loading element
+            var body = container || document.body;
             if (typeof attr_mask != "string") {
-                ele_mask = document.querySelector("body > ." + this.classMask);
+                ele_mask = body.querySelector("." + this.classMask);
             }
             if (ele_mask == null) {
                 ele_mask = document.createElement("div");
@@ -803,11 +853,11 @@ MLBF.define('lib.Mobilebone', function(require) {
                 if (typeof attr_mask == "string") {
                     aOrFormOrObj.appendChild(ele_mask);
                 } else {
-                    document.body.appendChild(ele_mask);
+                    body.appendChild(ele_mask);
                 }
             }
             // show loading
-            ele_mask.style.visibility = "visible";
+            ele_mask.style.display = "block";
 
             // ajax request
             var xhr = new XMLHttpRequest();
@@ -830,10 +880,12 @@ MLBF.define('lib.Mobilebone', function(require) {
                         }
                     } else if (params.dataType == "unknown") {
                         // ajax send by url
-                        // no history hush
-                        // no element remove
+                        // no history hush                  
                         params.history = false;
-                        params.remove = false;
+                        // I don't remember why add 'params.remove = false' here, 
+                        // but it seems that this will cause issues #147
+                        // no element remove
+                        // del → v2.5.8 // params.remove = false;
                         try {
                             // as json
                             response = JSON.parse(xhr.response);
@@ -858,21 +910,21 @@ MLBF.define('lib.Mobilebone', function(require) {
                 params.complete.call(params, xhr, xhr.status);
 
                 // hide loading
-                ele_mask.style.visibility = "hidden";
+                ele_mask.style.display = "none";
             }
 
             xhr.onerror = function(e) {
                 params.message = "Illegal request address or an unexpected network error!";
                 params.error.call(params, xhr, xhr.status);
                 // hide loading
-                ele_mask.style.visibility = "hidden";
+                ele_mask.style.display = "none";
             }
 
             xhr.ontimeout = function() {
                 params.message = "The request timeout!";
                 params.error.call(params, xhr, xhr.status);
                 // hide loading
-                ele_mask.style.visibility = "hidden";
+                ele_mask.style.display = "none";
             };
 
             // set request header for server
@@ -963,17 +1015,23 @@ MLBF.define('lib.Mobilebone', function(require) {
                 if (hasInited == true) return 'Don\'t repeat initialization!';
 
                 var hash = location.hash.replace("#&", "#"),
-                    ele_in = null;
+                    ele_in = null,
+                    container = null;
 
                 if (hash == "" || hash == "#") {
                     this.transition(document.querySelector("." + this.classPage));
                 } else if (isSimple.test(hash) == true && (ele_in = document.querySelector(hash)) && ele_in.classList.contains(this.classPage)) { // 'ele_in' must be a page element
                     this.transition(ele_in);
                 } else {
+                    // add on v2.6.1
+                    if (hash.split("container=").length == 2) {
+                        container = document.getElementById(hash.split("container=")[1].split("&")[0]);
+                    }
                     // as a ajax
                     this.ajax({
                         url: hash.replace("#", ""),
                         dataType: "unknown",
+                        container: container,
                         error: function() {
                             ele_in = document.querySelector("." + Mobilebone.classPage);
                             Mobilebone.transition(ele_in);
@@ -997,7 +1055,11 @@ MLBF.define('lib.Mobilebone', function(require) {
                         var ajax = target.getAttribute("data-ajax"),
                             href = target.href;
                         // if not ajax request
-                        if (target.getAttribute("data-rel") == "external" || ajax == "false" || (href.replace("://", "").split("/")[0] !== location.href.replace("://", "").split("/")[0] && ajax != "true") || (Mobilebone.captureLink == false && ajax != "true")) return;
+                        if (target.getAttribute("data-rel") == "external" || ajax == "false" || (href.replace("://", "").split("/")[0] !== location.href.replace("://", "").split("/")[0] && ajax != "true") || (Mobilebone.captureLink == false && ajax != "true")) {
+                            // issues #123 #137 #142
+                            if (/^http/i.test(href)) location.href = href;
+                            return;
+                        }
                         event.preventDefault();
                     });
                 } else {
@@ -1040,9 +1102,14 @@ MLBF.define('lib.Mobilebone', function(require) {
             }
             store.timerTap = Date.now();
             */
+            var target = null;
+            // you can pass target as params directly
+            if (event && event.nodeType == 1) {
+                target = event;
+                target.preventDefault = function() {};
+            }
             // get target and href
-            var target = event.target || event.touches[0],
-                href = target.href;
+            target = target || event.target || event.touches[0], href = target.href;
             if ((!href || /a/i.test(target.tagName) == false) && (target = target.getParentElementByTag("a"))) {
                 href = target.href;
             }
@@ -1068,7 +1135,7 @@ MLBF.define('lib.Mobilebone', function(require) {
 
             // if mask element exist and displaying, prevent double trigger
             var ele_mask = target.getElementsByClassName(Mobilebone.classMask)[0];
-            if (ele_mask && ele_mask.style.visibility != "hidden") {
+            if (ele_mask && ele_mask.style.display != "none") {
                 event.preventDefault();
                 return false;
             }
@@ -1078,8 +1145,9 @@ MLBF.define('lib.Mobilebone', function(require) {
                 container = idContainer && document.getElementById(idContainer);
             if (container && classPageInside && classPageInside != Mobilebone.classPage) {
                 self_page = container.querySelector(".in." + classPageInside) || container.querySelector(classPageInside);
-                if (self_page == null) return false;
+                // if (self_page == null) return false;
                 options.history = false;
+                options.title = false;
                 options.classPage = classPageInside;
             }
 
@@ -1146,8 +1214,11 @@ MLBF.define('lib.Mobilebone', function(require) {
                         back = Mobilebone.isBack(store[clean_url], self_page);
                     }
                     options.id = clean_url;
-                    if (document.body.contains(store[clean_url]) == false) {
-                        document.body.appendChild(store[clean_url]);
+
+                    var body = container || document.body;
+
+                    if (body.contains(store[clean_url]) == false) {
+                        body.appendChild(store[clean_url]);
                     }
                     Mobilebone.transition(store[clean_url], self_page, back, options);
                 } else {
@@ -1221,7 +1292,10 @@ MLBF.define('lib.Mobilebone', function(require) {
             }
 
             var hash = location.hash.replace("#&", "").replace(/^#/, ""),
-                page_in = null;
+                page_in = null
+                // add on v2.6.1
+                ,
+                container = null;
 
             if (hash == "") {
                 // if no hash, get first page as 'page_in'
@@ -1230,13 +1304,19 @@ MLBF.define('lib.Mobilebone', function(require) {
             } else {
                 page_in = store[hash];
 
+                // add on v2.6.1
+                if (hash.split("container=").length == 2) {
+                    container = document.getElementById(hash.split("container=")[1].split("&")[0]);
+                }
+
                 if (page_in && isSimple.test(hash) == false) {
                     // ajax store
                     Mobilebone.createPage(page_in, {
                         url: hash,
                         dataType: "unknown",
                         history: false,
-                        back: true
+                        back: true,
+                        container: container
                     });
                     return;
                 }
@@ -1248,7 +1328,8 @@ MLBF.define('lib.Mobilebone', function(require) {
                     Mobilebone.ajax({
                         url: hash,
                         dataType: "unknown",
-                        back: Mobilebone.isBack()
+                        back: Mobilebone.isBack(),
+                        container: container
                     });
                     return;
                 }
@@ -1270,7 +1351,11 @@ MLBF.define('lib.Mobilebone', function(require) {
         });
 
         document.MBLOADED = true;
-    })(Mobilebone);
+
+        return Mobilebone;
+    })();
+
+    window.Mobilebone = Mobilebone;
 
     return Mobilebone;
-});
+})
