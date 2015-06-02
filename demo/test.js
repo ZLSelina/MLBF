@@ -9,18 +9,13 @@ MLBF.define("demoModel", function(require, exports, module) {
         $ = require('lib.Zepto');
 
     var SomeModel = extend({
-        // model's default values
-        defaults: {
-            attr1: 'defaultAttrValue1',
-            attr2: 'defaultAttrValue2'
-        },
         // CGI URL for sync data
-        url: '/api/test',    
-        initialize: function(){
+        url: '/api/test',
+        initialize: function() {
             // initialization things
             console.log("I'm a model!");
-        }, 
-        test: function(){
+        },
+        test: function() {
             console.log("get id from model: " + this.get("id"));
             var that = this;
             REST.create({
@@ -28,7 +23,7 @@ MLBF.define("demoModel", function(require, exports, module) {
                 data: {
                     "id": that.get('id')
                 },
-                success: function(){
+                success: function() {
 
                 }
             })
@@ -40,7 +35,10 @@ MLBF.define("demoModel", function(require, exports, module) {
 MLBF.define("demoController", function(require, exports, module) {
     var Controller = require('app.Controller'),
         template = require('util.template'),
-        demoModel = require('demoModel');
+        demoModel = require('demoModel'),
+        Mobilebone = require('lib.Mobilebone');
+
+    console.log(Mobilebone);
 
     console.log(demoModel.url);
     demoModel.set("id", "test");
@@ -87,7 +85,9 @@ MLBF.define("demoController", function(require, exports, module) {
             ].join("");
             render = template.compile(html);
             html = render({
-                data: {"test": "Hello world!"}
+                data: {
+                    "test": "Hello world!"
+                }
             });
             this.$result.html(html);
         }
@@ -105,6 +105,3 @@ MLBF.define("demoController", function(require, exports, module) {
 
 var demoController = MLBF.require("demoController");
 new demoController();
-
-//var Mobilebone = MLBF.require('lib.Mobilebone');
-//Mobilebone.init();
