@@ -1,24 +1,104 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
-  <meta charset="utf-8">
-  <title>test</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1.0, maximum-scale=1, user-scalable=no"/>
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="screen-orientation" content="portrait">
-  <meta name="x5-orientation" content="portrait"><meta name="format-detection" content="telephone=no" />
-  <link type="text/css" rel="stylesheet" href="css/base.min.css" />
+    <meta charset="utf-8">
+    <title>test</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1.0, maximum-scale=1, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="screen-orientation" content="portrait">
+    <meta name="x5-orientation" content="portrait">
+    <meta name="format-detection" content="telephone=no" />
+    <link type="text/css" rel="stylesheet" href="css/base.min.css" />
+    <link type="text/css" rel="stylesheet" href="css/mobilebone.animate.css" />
+    <link type="text/css" rel="stylesheet" href="css/mobilebone.css" />
+    <style>
+    .page {
+        display: none;
+        padding: 48px 0;
+    }
+    
+    .mask {
+        display: none;
+    }
+    
+    header {
+        background: #000;
+        line-height: 48px;
+        height: 48px;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        text-align: center;
+        color: #fff;
+    }
+    
+    header a {
+        position: absolute;
+        left: 10px;
+    }
+    
+    footer {
+        background: #000;
+        line-height: 48px;
+        height: 48px;
+        width: 100%;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        text-align: center;
+        color: #fff;
+    }
+    
+    ul {
+        padding: 0;
+        margin: 0;
+    }
+    
+    ul li {
+        line-height: 40px;
+        background: #eee;
+        color: #333;
+        padding: 0 10px;
+        border-bottom: 1px solid #ccc;
+    }
+    
+    ul li a {
+        display: block;
+    }
+    </style>
 </head>
+
 <body class="body">
-	<div class="button">
-		<input type="submit" value="test">
-	</div>
-	<input type="date" name="date" value="2015-05-28">
-	<div class="result"></div>
-	<div id="page1" class="page out" data-title="页面1的标题">页面1的标题</div>
-	<div id="page2" class="page out" data-title="页面2的标题">页面2的标题</div>
-	<a href="#page2">target page</a>
-	<script src="js/MLBF.js"></script>
-	<script src="test.js"></script>
+    <div class="mask"><i class="loading"></i></div>
+    <div id="homePage" class="page in" data-title="首页">
+        <header>header</header>
+        <ul>
+            <li><a href="#&page1" data-container="container" data-reload>page 1 - #&amp;page1</a></li>
+            <li><a href="#page2" data-container="container" data-reload>page 2 - #page2</a></li>
+            <li><a href="#page3" data-container="container">page 3</a></li>
+            <li><a href="test.html" data-container="container">page 4</a></li>
+        </ul>
+    </div>
+    <div class="content" id="container">
+        <div id="page1" class="page out" data-title="page 1">
+            <header>page1<a href="#homePage" data-rel="back">Back</a></header>
+            <div class="button">
+                <input type="submit" value="test">
+            </div>
+            <div class="result"></div>
+        </div>
+        <div id="page2" class="page out" data-title="page 2">
+            <header>page2<a href="#homePage" data-rel="back">Back</a></header>
+        </div>
+        <div id="page3" class="page out" data-title="page 3">
+            <header>page3<a href="#homePage" data-rel="back">Back</a></header>
+        </div>
+    </div>
+    <footer>footer</footer>
+    <script src="js/MLBF.js"></script>
+    <script src="test.js"></script>
 </body>
+
 </html>
