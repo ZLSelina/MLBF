@@ -10,12 +10,11 @@ A solution for Mobile Web App. Integrated MV*, simple CMD, Zepto and Mobilebone.
 
 ### Install
 
-For Mac:
 	git clone https://github.com/aui/artTemplate.git
-or
-    bower install MLBF // 0.0.1
 
-For Windows: [github project](https://github.com/FroadUED/MLBF).
+or use bower to install:
+
+    bower install MLBF // 0.0.1
 
 ### CMD
 
