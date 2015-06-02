@@ -9,6 +9,7 @@ MLBF.define('app.Controller', function(require) {
         template = require('lib.template'),
         _ = require('util.underscore'),
         defaults = require('util.defaults'),
+        Attribute = require('util.Attribute'),
         Class = require('util.Class');
 
     var methods = {},
@@ -49,7 +50,7 @@ MLBF.define('app.Controller', function(require) {
      *      new Node(new Node('#someElement'));
      *      new Node(document.getElementById('someElement'));
      */
-    return Class.inherit(methods, {
+    return Class.inherit(methods, Attribute, {
         initialize: function(opts) {
 
             //merge options
