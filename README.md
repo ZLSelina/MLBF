@@ -15,9 +15,7 @@ For Mac:
 or
     bower install MLBF // 0.0.1
 
-For Windows: 
-
-[github项目](https://github.com/FroadUED/MLBF)
+For Windows: [github project](https://github.com/FroadUED/MLBF)
 
 ### CMD
 
@@ -51,6 +49,6 @@ Use Restful rules, will have logger, speed modules
 
 ### Mobilebone
 	
-[github项目](https://github.com/zhangxinxu/mobilebone)
+Find all introductions in [mobilebone's github project](https://github.com/zhangxinxu/mobilebone)
 
 © ued@f-road.com.cn
