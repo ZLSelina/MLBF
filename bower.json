@@ -1,0 +1,33 @@
+{
+  "name": "MLBF",
+  "homepage": "https://github.com/FroadUED/MLBF",
+  "version": "0.0.1",
+  "_release": "0.0.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.0.1",
+    "commit": "a0413fa45f3dfb499ec228297d45f99e50e68bea"
+  },
+  "_source": "git://github.com/FroadUED/MLBF.git",
+  "_target": "~0.0.1",
+  "_originalSource": "MLBF",
+  "authors": [
+    "hongri1987@gmail.com"
+  ],
+  "description": "A solution for Mobile Web App. Integrated MV*, simple CMD, Zepto and Mobilebone.",
+  "main": "dist/js/MLBF.min.js",
+  "keywords": [
+    "CMD",
+    "MV*",
+    "Mobilebone",
+    "Mobile"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
