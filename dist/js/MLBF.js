@@ -512,13 +512,15 @@ MLBF.define('app.REST', function(require) {
          * @param {String} method Accept CRUD methods only
          * @param {Object} options Sync options
          * @param {Object} [options.data] Data to be sent
-         * @returns {jquery.xhr} JQuery xhr object, supports promise
+         * @returns {Zepto.xhr} Zepto xhr object, supports promise
          */
         sync: function(method, options) {
             var type = methodMap[method];
 
             // Default options, unless specified.
             var ajaxDefaults = this.attributes().ajax;
+
+            var contentType = options.contentType || 'application/json';
 
             // Default JSON-request options.
             var params = {
@@ -530,9 +532,13 @@ MLBF.define('app.REST', function(require) {
             !options.url && urlError();
 
             // Ensure that we have the appropriate request data.
-            if (typeof options.data === 'object' && (type === 'POST' || type === 'PUT' || type === 'DELETE')) {
+            if (contentType == 'application/json' &&
+                typeof options.data === 'object' &&
+                (type === 'POST' || type === 'PUT' || type === 'DELETE')) {
                 params.contentType = 'application/json';
                 params.data = options.data = JSON.stringify(options.data || {});
+            } else {
+                params.data = options.data || {};
             }
 
             // Wrap success & error handler
@@ -633,7 +639,7 @@ MLBF.define('app.REST', function(require) {
      * @static
      * @param {Object} options Sync options
      * @param {Object} [options.data] Data to be sent
-     * @returns {jquery.xhr} JQuery xhr object, supports promise
+     * @returns {Zepto.xhr} Zepto xhr object, supports promise
      */
 
     /**
@@ -642,7 +648,7 @@ MLBF.define('app.REST', function(require) {
      * @static
      * @param {Object} options Sync options
      * @param {Object} [options.data] Data to be sent
-     * @returns {jquery.xhr} JQuery xhr object, supports promise
+     * @returns {Zepto.xhr} Zepto xhr object, supports promise
      * @example
      *      LBF.use(['app.REST'], function(REST){
      *          // Read data from backend
@@ -662,7 +668,7 @@ MLBF.define('app.REST', function(require) {
      *              }
      *          });
      *
-     *          // JQuery xhr object, supports promise
+     *          // Zepto xhr object, supports promise
      *          xhr
      *              .done(function(res, options){
      *                  logger.log('read done');
@@ -683,7 +689,7 @@ MLBF.define('app.REST', function(require) {
      * @static
      * @param {Object} options Sync options
      * @param {Object} [options.data] Data to be sent
-     * @returns {jquery.xhr} JQuery xhr object, supports promise
+     * @returns {Zepto.xhr} Zepto xhr object, supports promise
      */
 
     /**
@@ -693,7 +699,7 @@ MLBF.define('app.REST', function(require) {
      * @static
      * @param {Object} options Sync options
      * @param {Object} [options.data] Data to be sent
-     * @returns {jquery.xhr} JQuery xhr object, supports promise
+     * @returns {Zepto.xhr} Zepto xhr object, supports promise
      */
     _.forEach(['create', 'read', 'update', 'del'], function(method) {
         REST[method] = function(options) {
@@ -2628,10 +2634,10 @@ MLBF.define('lib.Zepto', function(require) {
                     value = callback(elements[i], i)
                     if (value != null) values.push(value)
                 } else
-                for (key in elements) {
-                    value = callback(elements[key], key)
-                    if (value != null) values.push(value)
-                }
+                    for (key in elements) {
+                        value = callback(elements[key], key)
+                        if (value != null) values.push(value)
+                    }
             return flatten(values)
         }
 
@@ -4142,6 +4148,257 @@ MLBF.define('lib.Zepto', function(require) {
         })
     })(Zepto);
 
+    //     Zepto.js
+    //     (c) 2010-2015 Thomas Fuchs
+    //     Zepto.js may be freely distributed under the MIT license.
+    //
+    //     Some code (c) 2005, 2013 jQuery Foundation, Inc. and other contributors
+
+    ;
+    (function($) {
+        var slice = Array.prototype.slice
+
+        function Deferred(func) {
+            var tuples = [
+                    // action, add listener, listener list, final state
+                    ["resolve", "done", $.Callbacks({
+                        once: 1,
+                        memory: 1
+                    }), "resolved"],
+                    ["reject", "fail", $.Callbacks({
+                        once: 1,
+                        memory: 1
+                    }), "rejected"],
+                    ["notify", "progress", $.Callbacks({
+                        memory: 1
+                    })]
+                ],
+                state = "pending",
+                promise = {
+                    state: function() {
+                        return state
+                    },
+                    always: function() {
+                        deferred.done(arguments).fail(arguments)
+                        return this
+                    },
+                    then: function( /* fnDone [, fnFailed [, fnProgress]] */ ) {
+                        var fns = arguments
+                        return Deferred(function(defer) {
+                            $.each(tuples, function(i, tuple) {
+                                var fn = $.isFunction(fns[i]) && fns[i]
+                                deferred[tuple[1]](function() {
+                                    var returned = fn && fn.apply(this, arguments)
+                                    if (returned && $.isFunction(returned.promise)) {
+                                        returned.promise()
+                                            .done(defer.resolve)
+                                            .fail(defer.reject)
+                                            .progress(defer.notify)
+                                    } else {
+                                        var context = this === promise ? defer.promise() : this,
+                                            values = fn ? [returned] : arguments
+                                        defer[tuple[0] + "With"](context, values)
+                                    }
+                                })
+                            })
+                            fns = null
+                        }).promise()
+                    },
+
+                    promise: function(obj) {
+                        return obj != null ? $.extend(obj, promise) : promise
+                    }
+                },
+                deferred = {}
+
+            $.each(tuples, function(i, tuple) {
+                var list = tuple[2],
+                    stateString = tuple[3]
+
+                promise[tuple[1]] = list.add
+
+                if (stateString) {
+                    list.add(function() {
+                        state = stateString
+                    }, tuples[i ^ 1][2].disable, tuples[2][2].lock)
+                }
+
+                deferred[tuple[0]] = function() {
+                    deferred[tuple[0] + "With"](this === deferred ? promise : this, arguments)
+                    return this
+                }
+                deferred[tuple[0] + "With"] = list.fireWith
+            })
+
+            promise.promise(deferred)
+            if (func) func.call(deferred, deferred)
+            return deferred
+        }
+
+        $.when = function(sub) {
+            var resolveValues = slice.call(arguments),
+                len = resolveValues.length,
+                i = 0,
+                remain = len !== 1 || (sub && $.isFunction(sub.promise)) ? len : 0,
+                deferred = remain === 1 ? sub : Deferred(),
+                progressValues, progressContexts, resolveContexts,
+                updateFn = function(i, ctx, val) {
+                    return function(value) {
+                        ctx[i] = this
+                        val[i] = arguments.length > 1 ? slice.call(arguments) : value
+                        if (val === progressValues) {
+                            deferred.notifyWith(ctx, val)
+                        } else if (!(--remain)) {
+                            deferred.resolveWith(ctx, val)
+                        }
+                    }
+                }
+
+            if (len > 1) {
+                progressValues = new Array(len)
+                progressContexts = new Array(len)
+                resolveContexts = new Array(len)
+                for (; i < len; ++i) {
+                    if (resolveValues[i] && $.isFunction(resolveValues[i].promise)) {
+                        resolveValues[i].promise()
+                            .done(updateFn(i, resolveContexts, resolveValues))
+                            .fail(deferred.reject)
+                            .progress(updateFn(i, progressContexts, progressValues))
+                    } else {
+                        --remain
+                    }
+                }
+            }
+            if (!remain) deferred.resolveWith(resolveContexts, resolveValues)
+            return deferred.promise()
+        }
+
+        $.Deferred = Deferred
+    })(Zepto)
+
+    //     Zepto.js
+    //     (c) 2010-2015 Thomas Fuchs
+    //     Zepto.js may be freely distributed under the MIT license.
+
+    ;
+    (function($) {
+        // Create a collection of callbacks to be fired in a sequence, with configurable behaviour
+        // Option flags:
+        //   - once: Callbacks fired at most one time.
+        //   - memory: Remember the most recent context and arguments
+        //   - stopOnFalse: Cease iterating over callback list
+        //   - unique: Permit adding at most one instance of the same callback
+        $.Callbacks = function(options) {
+            options = $.extend({}, options)
+
+            var memory, // Last fire value (for non-forgettable lists)
+                fired, // Flag to know if list was already fired
+                firing, // Flag to know if list is currently firing
+                firingStart, // First callback to fire (used internally by add and fireWith)
+                firingLength, // End of the loop when firing
+                firingIndex, // Index of currently firing callback (modified by remove if needed)
+                list = [], // Actual callback list
+                stack = !options.once && [], // Stack of fire calls for repeatable lists
+                fire = function(data) {
+                    memory = options.memory && data
+                    fired = true
+                    firingIndex = firingStart || 0
+                    firingStart = 0
+                    firingLength = list.length
+                    firing = true
+                    for (; list && firingIndex < firingLength; ++firingIndex) {
+                        if (list[firingIndex].apply(data[0], data[1]) === false && options.stopOnFalse) {
+                            memory = false
+                            break
+                        }
+                    }
+                    firing = false
+                    if (list) {
+                        if (stack) stack.length && fire(stack.shift())
+                        else if (memory) list.length = 0
+                        else Callbacks.disable()
+                    }
+                },
+
+                Callbacks = {
+                    add: function() {
+                        if (list) {
+                            var start = list.length,
+                                add = function(args) {
+                                    $.each(args, function(_, arg) {
+                                        if (typeof arg === "function") {
+                                            if (!options.unique || !Callbacks.has(arg)) list.push(arg)
+                                        } else if (arg && arg.length && typeof arg !== 'string') add(arg)
+                                    })
+                                }
+                            add(arguments)
+                            if (firing) firingLength = list.length
+                            else if (memory) {
+                                firingStart = start
+                                fire(memory)
+                            }
+                        }
+                        return this
+                    },
+                    remove: function() {
+                        if (list) {
+                            $.each(arguments, function(_, arg) {
+                                var index
+                                while ((index = $.inArray(arg, list, index)) > -1) {
+                                    list.splice(index, 1)
+                                        // Handle firing indexes
+                                    if (firing) {
+                                        if (index <= firingLength) --firingLength
+                                        if (index <= firingIndex) --firingIndex
+                                    }
+                                }
+                            })
+                        }
+                        return this
+                    },
+                    has: function(fn) {
+                        return !!(list && (fn ? $.inArray(fn, list) > -1 : list.length))
+                    },
+                    empty: function() {
+                        firingLength = list.length = 0
+                        return this
+                    },
+                    disable: function() {
+                        list = stack = memory = undefined
+                        return this
+                    },
+                    disabled: function() {
+                        return !list
+                    },
+                    lock: function() {
+                        stack = undefined;
+                        if (!memory) Callbacks.disable()
+                        return this
+                    },
+                    locked: function() {
+                        return !stack
+                    },
+                    fireWith: function(context, args) {
+                        if (list && (!fired || stack)) {
+                            args = args || []
+                            args = [context, args.slice ? args.slice() : args]
+                            if (firing) stack.push(args)
+                            else fire(args)
+                        }
+                        return this
+                    },
+                    fire: function() {
+                        return Callbacks.fireWith(this, arguments)
+                    },
+                    fired: function() {
+                        return !!fired
+                    }
+                }
+
+            return Callbacks
+        }
+    })(Zepto)
+
     return Zepto;
 });
 /**
@@ -4780,6 +5037,103 @@ MLBF.define('util.Class', function(require, exports, module){
     }
 });
 /**
+ * @fileOverview
+ * @author amoschen
+ * @version 1
+ * Created: 12-8-27 下午8:26
+ */
+MLBF.define('util.Cookie', function() {
+    var doc = document;
+
+    /**
+     * Cookie utilities
+     * @class Cookie
+     * @namespace util
+     * @module util
+     */
+    return {
+        /**
+         * Set a cookie item
+         * @method set
+         * @static
+         * @param {String} name Cookie name
+         * @param {*} value Cookie value
+         * @param {String} [domain=fullDomain] The domain cookie store in
+         * @param {String} [path=currentPath] The path cookie store in
+         * @param {Date} [expires=sessionTime] The expire time of cookie
+         * @chainable
+         */
+        set: function(name, value, domain, path, expires) {
+            if (expires) {
+                expires = new Date(+new Date() + expires);
+            }
+
+            var tempcookie = name + '=' + escape(value) +
+                ((expires) ? '; expires=' + expires.toGMTString() : '') +
+                ((path) ? '; path=' + path : '') +
+                ((domain) ? '; domain=' + domain : '');
+
+            //Ensure the cookie's size is under the limitation
+            if (tempcookie.length < 4096) {
+                doc.cookie = tempcookie;
+            }
+
+            return this;
+        },
+
+        /**
+         * Get value of a cookie item
+         * @method get
+         * @static
+         * @param {String} name Cookie name
+         * @return {String|Null}
+         */
+        get: function(name) {
+            var carr = doc.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
+            if (carr != null) {
+                return unescape(carr[2]);
+            }
+
+            return null;
+        },
+
+        /**
+         * Delete a cookie item
+         * @method del
+         * @static
+         * @param {String} name Cookie name
+         * @param {String} [domain=fullDomain] The domain cookie store in
+         * @param {String} [path=currentPath] The path cookie store in
+         * @chainable
+         */
+        del: function(name, domain, path) {
+            if (this.get(name)) {
+                doc.cookie = name + '=' +
+                    ((path) ? '; path=' + path : '') +
+                    ((domain) ? '; domain=' + domain : '') +
+                    ";expires=Thu, 01-Jan-1970 00:00:01 GMT";
+            }
+
+            return this;
+        },
+
+        /**
+         * Find certain string in cookie with regexp
+         * @method find
+         * @static
+         * @param {RegExp} pattern
+         * @return {Array|Null} RegExp matches
+         * @example
+         *      // assume cookie is like below
+         *      // ts_uid=5458535332; ptui_loginuin=mice530@qq.com; Hm_lvt_bb8beb2d26e5d753995874b8b827291d=1367826377,1369234241;
+         *      Cookie.find(/ptui_loginuin=([\S]*);/); // returns ["ptui_loginuin=mice530@qq.com;", "mice530@qq.com"]
+         */
+        find: function(pattern) {
+            return doc.cookie.match(pattern);
+        }
+    };
+});
+/**
  * Created by amos on 14-8-18.
  */
 MLBF.define('util.Event', function(require, exports) {
@@ -5057,6 +5411,222 @@ MLBF.define('util.isPlainObject', function(require, exports, module) {
 
         return key === undefined || hasOwn.call(obj, key);
     };
+});
+/**
+ * @fileOverview
+ * @author amoschen
+ * @version
+ * Created: 13-8-27 下午7:39
+ */
+MLBF.define('util.localStorage', function(require) {
+    var Cookie = require('util.Cookie'),
+        $ = require('lib.Zepto');
+
+    var COOKIE_PREFIX = 'IELS';
+
+    // set expires to 100 years to fake permanent storage
+    var EXPIRES = 3153600000000;
+
+    var doc = document,
+
+        commonPattern = new RegExp('(?:^|[ ;])' + COOKIE_PREFIX + '[^=]+=([^;$])'),
+
+        keyPattern = function(key) {
+            return COOKIE_PREFIX + key;
+        },
+
+        explore = function(callback) {
+            var attributes = doc.cookie.split(';'),
+                i = 0,
+                length = attributes.length,
+                items = [],
+                match;
+
+            if (callback) {
+                for (; i < length; i++) {
+                    if (match = commonPattern.exec(attributes[i])) {
+                        items.push(match[1]);
+                        callback(match[1]);
+                    }
+                }
+            } else {
+                for (; i < length; i++) {
+                    (match = commonPattern.exec(attributes[i])) && items.push(match[1]);
+                }
+            }
+
+            return items;
+        };
+
+    /**
+     * LocalStorage with compatible solution for IE
+     * use cookie as IE solution
+     * user data in IE, because of secure concern, is limited to same dir which is not suitable for common uses
+     * Cautions:
+     *  Storage events haven't been add to compatible solution
+     *  Non-IE browser counts on window.localStorage only, it means this tool is useless to those old non-IE browsers
+     * @class localStorage
+     * @namespace util.localStorage
+     * @module util
+     */
+    return window.localStorage || {
+        /**
+         * The number of key/value pairs currently present in the list associated with the localStorage.
+         * @property length
+         * @static
+         */
+        length: explore().length,
+
+        /**
+         * Get the value of the nth key in the localStorage list
+         * @method key
+         * @static
+         * @param {Number} index Index of key
+         * @return {String | Null}
+         */
+        key: function(index) {
+            return explore()[index] || null;
+        },
+
+        /**
+         * Get the current value associated with the given key.
+         * @method getItem
+         * @static
+         * @param {String} key
+         * @return {String | Null}
+         */
+        getItem: function(key) {
+            return Cookie.get(keyPattern(key));
+        },
+
+        /**
+         * Set ( add/update ) value of the given key
+         * If it couldn't set the new value, the method must throw a QuotaExceededError exception.
+         * Setting could fail if, e.g., the user has disabled storage for the site, or if the quota has been exceeded.
+         * @method setItem
+         * @static
+         * @param {String} key
+         * @param {String} value
+         */
+        setItem: function(key, value) {
+            Cookie.set(keyPattern(key), value, null, '/', EXPIRES);
+            this.length = explore().length;
+        },
+
+        /**
+         * Remove the key/value pair with the given key
+         * @method removeItem
+         * @static
+         * @param {String} key
+         */
+        removeItem: function(key) {
+            Cookie.del(key);
+            this.length = explore().length;
+        },
+
+        /**
+         * Empty all key/value pairs
+         * @method clear
+         * @static
+         */
+        clear: function() {
+            this.length = explore(function(item) {
+                Cookie.del($.trim(item.split('=')[0]));
+            }).length;
+        }
+    };
+});
+/**
+ * Created with JetBrains WebStorm.
+ * User: honsytshen
+ * Date: 13-9-9
+ * Time: 下午7:45
+ * To change this template use File | Settings | File Templates.
+ */
+MLBF.define('util.sessionStorage', function(require) {
+    var localStorage = require('util.localStorage'),
+        cookie = require('util.Cookie');
+
+    //variable to check whether the session is alive
+    var SESSION_STORAGE_PRE = 'IESESSION';
+
+    /**
+     * get the domain aliveStatus
+     * @return {Boolean}
+     */
+    var getAliveStatus = function() {
+            return !!cookie.get(SESSION_STORAGE_PRE);
+        },
+
+        /**
+         * set the domain aliveStatus
+         * @param {String} value
+         */
+        setAliveStatus = function(value) {
+            cookie.set(SESSION_STORAGE_PRE, value, null, '/');
+        },
+
+        /**
+         * When this domain was dead, we clear all item in localStorage
+         * which is under this domain
+         */
+        clear = function() {
+            var pattern = new RegExp('^' + SESSION_STORAGE_PRE + '[\\S]+$'),
+                queue = [],
+                i = 0,
+                length = localStorage.length;
+
+            for (; i < length; i++) {
+                if (localStorage.key(i).match(pattern)) {
+                    queue.push(localStorage.key(i));
+                }
+            }
+
+            for (i = 0, length = queue.length; i < length; i++) {
+                localStorage.removeItem(queue[i]);
+            }
+        };
+
+    if (!getAliveStatus()) {
+        // set status to alive
+        setAliveStatus('alive');
+
+        // clear expired session data
+        clear();
+    }
+
+    return {
+        /**
+         * @method setItem
+         * Set a key-value item in localStorage
+         * @param {String} key
+         * @param {String} value
+         */
+        setItem: function(key, value) {
+            localStorage.setItem(SESSION_STORAGE_PRE + key, value);
+        },
+
+        /**
+         * @method getItem
+         * get a key-value item in localStorage which is in this domain
+         * @param {String} key
+         * @return {String}
+         */
+        getItem: function(key) {
+            return localStorage.getItem(SESSION_STORAGE_PRE + key);
+        },
+
+        /**
+         * @method removeItem
+         * remove a key-value item in localStorage which is in this domain
+         * @param {String} key
+         */
+        removeItem: function(key) {
+            localStorage.removeItem(SESSION_STORAGE_PRE + key);
+        },
+
+        clear: clear
+    }
 });
 /******************************************************************************
  * MLBF MVC 0.0.1 2015-05-26 

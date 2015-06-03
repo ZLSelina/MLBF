@@ -51,7 +51,7 @@ MLBF.define('app.REST', function(require) {
          * @param {String} method Accept CRUD methods only
          * @param {Object} options Sync options
          * @param {Object} [options.data] Data to be sent
-         * @returns {jquery.xhr} JQuery xhr object, supports promise
+         * @returns {Zepto.xhr} Zepto xhr object, supports promise
          */
         sync: function(method, options) {
             var type = methodMap[method];
@@ -178,7 +178,7 @@ MLBF.define('app.REST', function(require) {
      * @static
      * @param {Object} options Sync options
      * @param {Object} [options.data] Data to be sent
-     * @returns {jquery.xhr} JQuery xhr object, supports promise
+     * @returns {Zepto.xhr} Zepto xhr object, supports promise
      */
 
     /**
@@ -187,7 +187,7 @@ MLBF.define('app.REST', function(require) {
      * @static
      * @param {Object} options Sync options
      * @param {Object} [options.data] Data to be sent
-     * @returns {jquery.xhr} JQuery xhr object, supports promise
+     * @returns {Zepto.xhr} Zepto xhr object, supports promise
      * @example
      *      LBF.use(['app.REST'], function(REST){
      *          // Read data from backend
@@ -207,7 +207,7 @@ MLBF.define('app.REST', function(require) {
      *              }
      *          });
      *
-     *          // JQuery xhr object, supports promise
+     *          // Zepto xhr object, supports promise
      *          xhr
      *              .done(function(res, options){
      *                  logger.log('read done');
@@ -228,7 +228,7 @@ MLBF.define('app.REST', function(require) {
      * @static
      * @param {Object} options Sync options
      * @param {Object} [options.data] Data to be sent
-     * @returns {jquery.xhr} JQuery xhr object, supports promise
+     * @returns {Zepto.xhr} Zepto xhr object, supports promise
      */
 
     /**
@@ -238,7 +238,7 @@ MLBF.define('app.REST', function(require) {
      * @static
      * @param {Object} options Sync options
      * @param {Object} [options.data] Data to be sent
-     * @returns {jquery.xhr} JQuery xhr object, supports promise
+     * @returns {Zepto.xhr} Zepto xhr object, supports promise
      */
     _.forEach(['create', 'read', 'update', 'del'], function(method) {
         REST[method] = function(options) {

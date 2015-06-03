@@ -14,7 +14,8 @@ A solution for Mobile Web App. Integrated MV*, simple CMD, Zepto and Mobilebone.
 
 or use bower to install:
 
-    bower install MLBF // 0.0.1
+	// version 0.0.2
+    bower install MLBF
 
 ### CMD
 

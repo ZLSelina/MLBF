@@ -18,15 +18,16 @@ MLBF.define("demoModel", function(require, exports, module) {
         test: function() {
             console.log("get id from model: " + this.get("id"));
             var that = this;
-            REST.read({
+            var promise = REST.read({
                 url: this.url,
                 data: {
                     "id": that.get('id')
                 },
-                success: function() {
-
+                success: function(data) {
+                    that.set("responseData", data);
                 }
-            })
+            }).done(function(){console.log("ajax done!")})
+            return promise;
         }
     }, Model);
     return SomeModel;
@@ -43,7 +44,9 @@ MLBF.define("demoController", function(require, exports, module) {
     console.log(demoModel.url);
     demoModel.set("id", "test");
     console.log(demoModel.get("id"));
-    demoModel.test();
+    demoModel.test().done(function(){
+        console.log(demoModel.get("responseData"));
+    }).fail();
     console.log(demoModel.attributes());
 
     var Test = Controller.inherit({
@@ -86,7 +89,7 @@ MLBF.define("demoController", function(require, exports, module) {
             render = template.compile(html);
             html = render({
                 data: {
-                    "test": "Hello world!"
+                    "test": "<script>alert(1)</script>Hello world!"
                 }
             });
             this.$result.html(html);
