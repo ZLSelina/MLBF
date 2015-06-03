@@ -18,7 +18,7 @@ MLBF.define("demoModel", function(require, exports, module) {
         test: function() {
             console.log("get id from model: " + this.get("id"));
             var that = this;
-            REST.create({
+            REST.read({
                 url: this.url,
                 data: {
                     "id": that.get('id')

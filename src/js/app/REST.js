@@ -59,6 +59,8 @@ MLBF.define('app.REST', function(require) {
             // Default options, unless specified.
             var ajaxDefaults = this.attributes().ajax;
 
+            var contentType = options.contentType || 'application/json';
+
             // Default JSON-request options.
             var params = {
                 type: type,
@@ -69,9 +71,13 @@ MLBF.define('app.REST', function(require) {
             !options.url && urlError();
 
             // Ensure that we have the appropriate request data.
-            if (typeof options.data === 'object' && (type === 'POST' || type === 'PUT' || type === 'DELETE')) {
+            if (contentType == 'application/json' &&
+                typeof options.data === 'object' &&
+                (type === 'POST' || type === 'PUT' || type === 'DELETE')) {
                 params.contentType = 'application/json';
                 params.data = options.data = JSON.stringify(options.data || {});
+            } else {
+                params.data = options.data || {};
             }
 
             // Wrap success & error handler
