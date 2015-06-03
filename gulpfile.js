@@ -50,7 +50,7 @@ gulp.task('imagesDemo', function() {
 
 gulp.task('buildDemo', ['scriptsDemo', 'sassDemo', 'imagesDemo']);
 
-gulp.task('server', ['buildDemo'], function() {
+gulp.task('server', ['buildDemo', 'watch'], function() {
     connect.server({
         root: 'demo',
         port: 8888,

@@ -8,23 +8,23 @@ A solution for Mobile Web App. Integrated MV*, simple CMD, Zepto and Mobilebone.
 *	[MV*](#MV*)
 *   [Mobilebone](#Mobilebone)
 
-### Install
+## Install
 
 	git clone https://github.com/aui/artTemplate.git
 
 or use bower to install:
 
-	// version 0.0.2
+	// version 0.0.3
     bower install MLBF
 
-### CMD
+## CMD
 
 	//defined a module
 	MLBF.define("appName", function(require, exports, module) {})
 	//require a module
 	MLBF.require("appName");
 
-### MV*
+## MV*
 
 Use Restful rules, will have logger, speed modules.
 
@@ -47,7 +47,7 @@ Use Restful rules, will have logger, speed modules.
     })
 	
 
-### Mobilebone
+## Mobilebone
 	
 Find all introductions in [mobilebone's github project](https://github.com/zhangxinxu/mobilebone).
 

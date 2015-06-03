@@ -459,12 +459,14 @@ MLBF.define('app.Model', function(require, exports, module) {
     var Model = extend({}, Attribute);
     return Model;
 });
-/**
- * Created by amos on 14-1-14.
- */
+/******************************************************************************
+ * MLBF 0.0.1 2015-06-02
+ * author hongri
+ ******************************************************************************/
 MLBF.define('app.REST', function(require) {
     var extend = require('util.extend'),
         _ = require('util.underscore'),
+        cookie = require('util.Cookie'),
         $ = require('lib.Zepto'),
         Model = require('app.Model'),
         Event = require('util.Event');
@@ -530,6 +532,11 @@ MLBF.define('app.REST', function(require) {
 
             // Ensure that we have a URL.
             !options.url && urlError();
+
+            params.headers = options.header || {
+                memberCode: cookie.get("memberCode") || '',
+                token: cookie.get("u_login_token")
+            }
 
             // Ensure that we have the appropriate request data.
             if (contentType == 'application/json' &&
