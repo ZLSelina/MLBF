@@ -40,6 +40,7 @@ gulp.task('scriptsDemo', function() {
 
 gulp.task('sassDemo', function() {
     return gulp.src('src/css/*')
+        .pipe(concat('mobilebone.css'))
         .pipe(gulp.dest('demo/css'));
 });
 
@@ -92,7 +93,12 @@ gulp.task('scriptsDist', function() {
 });
 
 gulp.task('sassDist', function() {
-    return gulp.src('src/css/*')
+    return gulp.src('src/css/mobilebone.css')
+        .pipe(gulp.dest('dist/css'))
+        .pipe(rename({
+            suffix: ".min"
+        }))
+        .pipe(csso())
         .pipe(gulp.dest('dist/css'));
 });
 

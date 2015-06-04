@@ -5278,6 +5278,7 @@ MLBF.define('util.Event', function(require, exports) {
     }
 });
 MLBF.define('util.defaults', function( require ){
+    var extend = require('util.extend');
 
     /**
      * Merge options with defaults, support multiple defaults
@@ -5309,7 +5310,7 @@ MLBF.define('util.defaults', function( require ){
         // move original options to tail
         args.push( options );
 
-        return $.extend.apply( this, args );
+        return extend.apply( this, args );
     };
 });
 /**

@@ -18,7 +18,7 @@ MLBF.define("demoModel", function(require, exports, module) {
         test: function() {
             console.log("get id from model: " + this.get("id"));
             var that = this;
-            var promise = REST.read({
+            var promise = REST.create({
                 url: this.url,
                 data: {
                     "id": that.get('id')
@@ -39,15 +39,14 @@ MLBF.define("demoController", function(require, exports, module) {
         demoModel = require('demoModel'),
         Mobilebone = require('lib.Mobilebone');
 
-    console.log(Mobilebone);
-
     console.log(demoModel.url);
     demoModel.set("id", "test");
     console.log(demoModel.get("id"));
     demoModel.test().done(function(){
         console.log(demoModel.get("responseData"));
+        console.log("demo model attrs: " + JSON.stringify(demoModel.attributes()));
     }).fail();
-    console.log(demoModel.attributes());
+    console.log("demo model attrs: " + JSON.stringify(demoModel.attributes()));
 
     var Test = Controller.inherit({
         /**
