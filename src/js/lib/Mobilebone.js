@@ -116,7 +116,7 @@ MLBF.define('lib.Mobilebone', function(require) {
          *
          * @type boolean
          **/
-        Mobilebone.evalScript = false;
+        Mobilebone.evalScript = true;
 
 
         if ( // When running inside a FF iframe, calling replaceState causes an error. So set 'pushStateEnabled = false' 

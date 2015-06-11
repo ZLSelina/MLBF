@@ -8,6 +8,7 @@ MLBF.define('app.REST', function(require) {
         cookie = require('util.Cookie'),
         $ = require('lib.Zepto'),
         Model = require('app.Model'),
+        Attribute = require('util.Attribute'),
         Event = require('util.Event');
 
     // var plugins = {
@@ -177,7 +178,7 @@ MLBF.define('app.REST', function(require) {
 
             return this;
         }
-    }, Model, Event);
+    }, Attribute, Event);
 
     /**
      * Create operation on backend

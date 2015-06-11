@@ -119,7 +119,7 @@ MLBF.define('app.Controller', function(require) {
          * @chainable
          */
         render: function() {
-            this.setElement(this.get('selector'));
+            this.setElement(this.get('selector') || this.selector);
             return this;
         },
 
@@ -131,7 +131,7 @@ MLBF.define('app.Controller', function(require) {
          * @chainable
          */
         setElement: function(el) {
-            var $el = this.Zepto(el.node || el);
+            var $el = this.Zepto(el.node || el || this.selector) ;
 
             if (this.$el) {
                 this.$el.replaceWith($el);

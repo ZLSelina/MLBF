@@ -16,7 +16,7 @@
     }
 
     var exports = global.MLBF = {
-        version: "0.0.1"
+        version: "0.0.5"
     }
 
     var data = exports.data = {};
@@ -220,7 +220,7 @@ MLBF.define('app.Controller', function(require) {
          * @chainable
          */
         render: function() {
-            this.setElement(this.get('selector'));
+            this.setElement(this.get('selector') || this.selector);
             return this;
         },
 
@@ -232,7 +232,7 @@ MLBF.define('app.Controller', function(require) {
          * @chainable
          */
         setElement: function(el) {
-            var $el = this.Zepto(el.node || el);
+            var $el = this.Zepto(el.node || el || this.selector) ;
 
             if (this.$el) {
                 this.$el.replaceWith($el);
@@ -449,15 +449,44 @@ MLBF.define('app.Controller', function(require) {
     });
 });
 /******************************************************************************
- * MLBF Controller 0.0.1 2015-05-26 
+ * MLBF Controller 0.0.5 2015-06-10
  * author hongri
  ******************************************************************************/
 MLBF.define('app.Model', function(require, exports, module) {
     var extend = require('util.extend'),
-        Attribute = require('util.Attribute');
+        Attribute = require('util.Attribute'),
+        Class = require('util.Class');
+
+   	/**
+     * All ui components' base. All Zepto methods and template engine are mixed in.
+     * @class Node
+     * @namespace app.Controller
+     * @extends util.Class
+     * @uses lib.Zepto
+     * @uses util.Attributes
+     * @constructor
+     * @param {String|Zepto|documentElement|ui.Nodes.Node} selector Node selector
+     * @example
+     *      new Node('#someElement'); // Turn element, which id is 'someElement', into a node
+     *
+     * @example
+     *      // Zepto object or Node object or document element object are all acceptable
+     *      new Node($('#someElement'));
+     *      new Node(new Node('#someElement'));
+     *      new Node(document.getElementById('someElement'));
+     */
+    return Class.inherit(Attribute, {
+        initialize: function(opts) {
+            /**
+             * Fire when node initialized
+             * @event load
+             * @param {Event} event JQuery event
+             * @param {Node} node Node object
+             */
+            this.trigger('load', [this]);
+        }
+    });
         
-    var Model = extend({}, Attribute);
-    return Model;
 });
 /******************************************************************************
  * MLBF 0.0.1 2015-06-02
@@ -469,6 +498,7 @@ MLBF.define('app.REST', function(require) {
         cookie = require('util.Cookie'),
         $ = require('lib.Zepto'),
         Model = require('app.Model'),
+        Attribute = require('util.Attribute'),
         Event = require('util.Event');
 
     // var plugins = {
@@ -638,7 +668,7 @@ MLBF.define('app.REST', function(require) {
 
             return this;
         }
-    }, Model, Event);
+    }, Attribute, Event);
 
     /**
      * Create operation on backend
@@ -989,7 +1019,7 @@ MLBF.define('lib.Mobilebone', function(require) {
          *
          * @type boolean
          **/
-        Mobilebone.evalScript = false;
+        Mobilebone.evalScript = true;
 
 
         if ( // When running inside a FF iframe, calling replaceState causes an error. So set 'pushStateEnabled = false' 

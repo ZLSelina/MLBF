@@ -16,7 +16,7 @@
     }
 
     var exports = global.MLBF = {
-        version: "0.0.1"
+        version: "0.0.5"
     }
 
     var data = exports.data = {};
