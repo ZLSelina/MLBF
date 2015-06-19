@@ -5,17 +5,13 @@
 
 MLBF.define('DemoController', function(require, exports, module) {
     var Controller = require('app.Controller'),
-        template = require('util.template'),
-        DemoModel = require('DemoModel'),
-        Mobilebone = require('lib.Mobilebone');
-
-
+        template = require('util.template');
 
     var DemoController = Controller.inherit({
         /**
          * controller scope
          */
-        selector: '.DemoController',
+        selector: '#demoController',
 
         /**
          * this.$element
@@ -40,6 +36,8 @@ MLBF.define('DemoController', function(require, exports, module) {
 
         //run when init
         defaultActions: function() {
+            DemoModel = require('DemoModel');
+
             var that = this;
             console.log('I am Controller');
 
@@ -77,6 +75,3 @@ MLBF.define('DemoController', function(require, exports, module) {
 
     return DemoController;
 })
-
-var DemoController = MLBF.require('DemoController');
-new DemoController();

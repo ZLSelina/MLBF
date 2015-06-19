@@ -9,19 +9,77 @@
     <meta name="screen-orientation" content="portrait">
     <meta name="x5-orientation" content="portrait">
     <meta name="format-detection" content="telephone=no" />
-    <link type="text/css" rel="stylesheet" href="css/mobilebone.css" />
+    <link type="text/css" rel="stylesheet" class="page-css" href="/css/mobilebone.css" />
+    <style>
+    .page {
+        display: none;
+        padding: 48px 0;
+    }
+    
+    .mask {
+        display: none;
+    }
+    
+    header {
+        background: #000;
+        line-height: 48px;
+        height: 48px;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        text-align: center;
+        color: #fff;
+    }
+    
+    header a {
+        position: absolute;
+        left: 10px;
+    }
+    
+    footer {
+        background: #000;
+        line-height: 48px;
+        height: 48px;
+        width: 100%;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        text-align: center;
+        color: #fff;
+    }
+    
+    ul {
+        padding: 0;
+        margin: 0;
+    }
+    
+    ul li {
+        line-height: 40px;
+        background: #eee;
+        color: #333;
+        padding: 0 10px;
+        border-bottom: 1px solid #ccc;
+    }
+    
+    ul li a {
+        display: block;
+    }
+    </style>
 </head>
 
-<body class="body">
-    <div class="page out">
+<body id="demoController">
+    <div mlbf-controller='DemoController'></div>
+    <div class="page out" id="testController" mlbf-controller='TestController'>
         <header>page 4<a href="#homePage" data-rel="back">Back</a></header>
-        <div>html 4</div>
-        <script>
-            $(document).ready(function(){
-                console.log('This is test page!');
-            })
-        </script>
+        <div>
+            <input type="submit" class="test" value="test" />
+            <span class="result"></span>
+        </div>
     </div>
+    <script src="js/MLBF.js"></script>
+    <script src="/demoModel.js" class="page-js"></script>
+    <script src="/testController.js" class="page-js"></script>
+    <script src="/demoController.js" class="page-js"></script>
 </body>
-
 </html>

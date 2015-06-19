@@ -5,6 +5,8 @@
  * bone of switch for mobile web app 
  **/
 MLBF.define('lib.Mobilebone', function(require) {
+    var $ = require('lib.Zepto');
+
     var Mobilebone = (function() {
         var Mobilebone = {},
             root = this;
@@ -573,6 +575,8 @@ MLBF.define('lib.Mobilebone', function(require) {
                     Mobilebone.createPage(pageDom, triggerLink, { response: '<div...>' });
          *
         **/
+        var pageController, pageControllerObj, initController = [];
+
         Mobilebone.createPage = function(domHtml, eleOrObj, options) {
             var response = null,
                 container = null,
@@ -643,6 +647,12 @@ MLBF.define('lib.Mobilebone', function(require) {
                 create.appendChild(domHtml);
             }
 
+            $(domHtml).each(function(){
+                if($(this).attr('mlbf-controller') && initController.join(',').indexOf($(this).attr('mlbf-controller')) == -1) {
+                    initController.push($(this).attr('mlbf-controller'));
+                }
+            })
+
             // excute inline JavaScript
             if (Mobilebone.evalScript == true && domHtml.firstintoBind != true) {
                 slice.call(create.getElementsByTagName("script")).forEach(function(originScript) {
@@ -679,6 +689,38 @@ MLBF.define('lib.Mobilebone', function(require) {
 
             // insert create page as a last-child
             (container || document.body).appendChild(create_page);
+
+            var jsArrDep = [];
+
+            if(!pageController && !pageControllerObj) {
+                var jsArr = $(create).find('.page-js'),
+                    cssArr = $(create).find('.page-css');
+                    
+                jsArr.each(function(){
+                    jsArrDep.push($(this).attr('src'));
+                })
+                
+                MLBF.use(jsArrDep, function(){
+                    if(!pageController && !pageControllerObj) {
+                        for(var i = 0; i < initController.length; i++) {
+                            pageController = MLBF.require(initController[i]);
+                            pageControllerObj = new pageController();
+                        }
+                    }
+                });
+
+                cssArr.each(function(){
+                    MLBF.use($(this).attr('href'));
+                })
+            }
+            if(pageController && pageControllerObj) {
+                setTimeout(function(){
+                    for(var i = 0; i < initController.length; i++) {
+                        pageController = MLBF.require(initController[i]);
+                        pageControllerObj = new pageController();
+                    }
+                }, 17);
+            }
 
             // release memory
             create = null;
@@ -1207,9 +1249,10 @@ MLBF.define('lib.Mobilebone', function(require) {
 
                 // if has loaded and the value of 'data-reload' is not 'true'
                 var attr_reload = target.getAttribute("data-reload"),
+                    attr_cache = target.getAttribute("data-cache"),
                     id = target.getAttribute("href");
 
-                if ((attr_reload == null || attr_reload == "false") && store[clean_url]) {
+                if ((attr_reload == null || attr_reload == "false") && store[clean_url] && attr_cache != 'false') {
                     if (back == false && rel == "auto") {
                         back = Mobilebone.isBack(store[clean_url], self_page);
                     }

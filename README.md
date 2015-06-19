@@ -1,10 +1,10 @@
 # MLBF
-A solution for Mobile Web App. Integrated MV*, simple CMD, Zepto and Mobilebone.
+A solution for Mobile Web App. Integrated MV*, Seajs, Zepto and Mobilebone.
 
 ##	List
 
 *	[Install](#Install)
-*	[Simple CMD](#Simple CMD)
+*	[Seajs](#Seajs)
 *	[MV*](#MV*)
 *   [Mobilebone](#Mobilebone)
 
@@ -14,10 +14,10 @@ A solution for Mobile Web App. Integrated MV*, simple CMD, Zepto and Mobilebone.
 
 or use bower to install:
 
-	// version 0.0.3
+	// version 1.0.1
     bower install MLBF
 
-## CMD
+## Seajs
 
 	//defined a module
 	MLBF.define("appName", function(require, exports, module) {})

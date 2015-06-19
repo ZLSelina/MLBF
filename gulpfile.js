@@ -65,7 +65,7 @@ gulp.task('server', ['buildDemo', 'watch'], function() {
             ]
         }
     });
-    require('opn')('http://localhost:8888/');
+    require('opn')('http://localhost:8888/demo.html');
 });
 
 gulp.task('watch', function() {

@@ -1,6 +1,6 @@
 {
   "name": "m",
-  "version": "0.0.5",
+  "version": "1.0.1",
   "path": "m",
   "devDependencies": {
     "connect": "^2.14.4",
