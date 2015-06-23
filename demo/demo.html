@@ -70,7 +70,7 @@
 
 <body>
     <div class="mask"><i class="loading"></i></div>
-    <div id="homePage" class="page in" data-title="首页">
+    <div id="homePage" class="page in" data-title="首页" id="demoController" mlbf-controller='DemoController'>
         <header>header</header>
         <ul>
             <li><a href="#&page1" data-container="container" data-reload>page 1 - #&amp;page1</a></li>
@@ -96,6 +96,8 @@
     </div>
     <footer>footer</footer>
     <script src="js/MLBF.js"></script>
+    <script src="/demoModel.js" class="page-js"></script>
+    <script src="/demoController.js" class="page-js"></script>
     <script>
         Mobilebone = MLBF.require('lib.Mobilebone');
     </script>

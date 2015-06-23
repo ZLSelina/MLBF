@@ -2523,7 +2523,9 @@ MLBF.define('lib.Mobilebone', function(require) {
                     Mobilebone.createPage(pageDom, triggerLink, { response: '<div...>' });
          *
         **/
-        var pageController, pageControllerObj, initController = [];
+        var pageController = {},
+            pageControllerObj = {},
+            initController = [];
 
         Mobilebone.createPage = function(domHtml, eleOrObj, options) {
             var response = null,
@@ -2595,8 +2597,10 @@ MLBF.define('lib.Mobilebone', function(require) {
                 create.appendChild(domHtml);
             }
 
-            $(domHtml).each(function(){
-                if($(this).attr('mlbf-controller') && initController.join(',').indexOf($(this).attr('mlbf-controller')) == -1) {
+            // add controller 
+            initController = [];
+            $(domHtml).each(function() {
+                if ($(this).attr('mlbf-controller') && initController.join(',').indexOf($(this).attr('mlbf-controller')) == -1) {
                     initController.push($(this).attr('mlbf-controller'));
                 }
             })
@@ -2638,34 +2642,36 @@ MLBF.define('lib.Mobilebone', function(require) {
             // insert create page as a last-child
             (container || document.body).appendChild(create_page);
 
-            var jsArrDep = [];
+            // require and use controller
+            var jsArrDep = [],
+                pageArr = [];
+            for (var key in pageController) {
+                pageArr.push(key);
+            }
+            if (pageArr.length != initController.length) {
 
-            if(!pageController && !pageControllerObj) {
                 var jsArr = $(create).find('.page-js'),
                     cssArr = $(create).find('.page-css');
-                    
-                jsArr.each(function(){
+
+                jsArr.each(function() {
                     jsArrDep.push($(this).attr('src'));
                 })
-                
-                MLBF.use(jsArrDep, function(){
-                    if(!pageController && !pageControllerObj) {
-                        for(var i = 0; i < initController.length; i++) {
-                            pageController = MLBF.require(initController[i]);
-                            pageControllerObj = new pageController();
-                        }
+
+                MLBF.use(jsArrDep, function() {
+                    for (var i = 0; i < initController.length; i++) {
+                        pageController[initController[i]] = MLBF.require(initController[i]);
+                        pageControllerObj[initController[i]] = new pageController[initController[i]]();
                     }
                 });
 
-                cssArr.each(function(){
+                cssArr.each(function() {
                     MLBF.use($(this).attr('href'));
                 })
-            }
-            if(pageController && pageControllerObj) {
-                setTimeout(function(){
-                    for(var i = 0; i < initController.length; i++) {
-                        pageController = MLBF.require(initController[i]);
-                        pageControllerObj = new pageController();
+            } else {
+                setTimeout(function() {
+                    for (var i = 0; i < initController.length; i++) {
+                        pageController[initController[i]] = MLBF.require(initController[i]);
+                        pageControllerObj[initController[i]] = new pageController[initController[i]]();
                     }
                 }, 17);
             }
@@ -3071,6 +3077,32 @@ MLBF.define('lib.Mobilebone', function(require) {
 
                 // change flag-var for avoiding repeat init
                 hasInited = true;
+
+                // require and use controller
+                initController = [];
+                $('.' + Mobilebone.classPage).each(function() {
+                    if ($(this).attr('mlbf-controller') && initController.join(',').indexOf($(this).attr('mlbf-controller')) == -1) {
+                        initController.push($(this).attr('mlbf-controller'));
+                    }
+                })
+
+                var jsArrDep = [];
+
+                var jsArr = $('body').find('.page-js'),
+                    cssArr = $('body').find('.page-css');
+
+                jsArr.each(function() {
+                    jsArrDep.push($(this).attr('src'));
+                })
+
+                for (var i = 0; i < initController.length; i++) {
+                    pageController[initController[i]] = MLBF.require(initController[i]);
+                    pageControllerObj[initController[i]] = new pageController[initController[i]]();
+                }
+
+                cssArr.each(function() {
+                    MLBF.use($(this).attr('href'));
+                })
             };
 
         /**
