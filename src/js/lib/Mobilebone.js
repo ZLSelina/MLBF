@@ -650,7 +650,6 @@ MLBF.define('lib.Mobilebone', function(require) {
             }
 
             // add controller 
-            initController = [];
             $(domHtml).each(function() {
                 if ($(this).attr('mlbf-controller') && initController.join(',').indexOf($(this).attr('mlbf-controller')) == -1) {
                     initController.push($(this).attr('mlbf-controller'));
@@ -1131,7 +1130,6 @@ MLBF.define('lib.Mobilebone', function(require) {
                 hasInited = true;
 
                 // require and use controller
-                initController = [];
                 $('.' + Mobilebone.classPage).each(function() {
                     if ($(this).attr('mlbf-controller') && initController.join(',').indexOf($(this).attr('mlbf-controller')) == -1) {
                         initController.push($(this).attr('mlbf-controller'));
@@ -1151,10 +1149,6 @@ MLBF.define('lib.Mobilebone', function(require) {
                     pageController[initController[i]] = MLBF.require(initController[i]);
                     pageControllerObj[initController[i]] = new pageController[initController[i]]();
                 }
-
-                cssArr.each(function() {
-                    MLBF.use($(this).attr('href'));
-                })
             };
 
         /**
