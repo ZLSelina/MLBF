@@ -546,9 +546,8 @@ body {
 }
 
 /* construction */
-.page {
+html, body, .page {
 	height: 100%; width: 100%;
-	overflow: hidden;
 }
 .page {
 	position: absolute; left: 0; top: 0;

@@ -2677,6 +2677,10 @@ MLBF.define('lib.Mobilebone', function(require) {
                 create_page.setAttribute("data-title", create_title.innerText);
             }
 
+            if($('#' + $(create_page).attr('id')).size() > 0) {
+                $('#' + $(create_page).attr('id')).remove();
+            }
+
             // insert create page as a last-child
             (container || document.body).appendChild(create_page);
 
