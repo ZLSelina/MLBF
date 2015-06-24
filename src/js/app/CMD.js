@@ -373,6 +373,7 @@
 
         function request(url, callback, charset) {
             var isCSS = IS_CSS_RE.test(url)
+            
             var node = doc.createElement(isCSS ? "link" : "script")
 
             if (charset) {
