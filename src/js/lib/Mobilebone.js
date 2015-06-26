@@ -650,9 +650,11 @@ MLBF.define('lib.Mobilebone', function(require) {
             }
 
             // add controller 
+            var tempController = [];
             $(domHtml).each(function() {
-                if ($(this).attr('mlbf-controller') && initController.join(',').indexOf($(this).attr('mlbf-controller')) == -1) {
+                if ($(this).attr('mlbf-controller') && tempController.join(',').indexOf($(this).attr('mlbf-controller')) == -1) {
                     initController.push($(this).attr('mlbf-controller'));
+                    tempController.push($(this).attr('mlbf-controller'));
                 }
             })
 
@@ -713,9 +715,9 @@ MLBF.define('lib.Mobilebone', function(require) {
                 })
 
                 MLBF.use(jsArrDep, function() {
-                    for (var i = 0; i < initController.length; i++) {
-                        pageController[initController[i]] = MLBF.require(initController[i]);
-                        pageControllerObj[initController[i]] = new pageController[initController[i]]();
+                    for (var i = 0; i < tempController.length; i++) {
+                        pageController[tempController[i]] = MLBF.require(tempController[i]);
+                        pageControllerObj[tempController[i]] = new pageController[tempController[i]]();
                     }
                 });
 
@@ -724,9 +726,9 @@ MLBF.define('lib.Mobilebone', function(require) {
                 })
             } else {
                 setTimeout(function() {
-                    for (var i = 0; i < initController.length; i++) {
-                        pageController[initController[i]] = MLBF.require(initController[i]);
-                        pageControllerObj[initController[i]] = new pageController[initController[i]]();
+                    for (var i = 0; i < tempController.length; i++) {
+                        pageController[tempController[i]] = MLBF.require(tempController[i]);
+                        pageControllerObj[tempController[i]] = new pageController[tempController[i]]();
                     }
                 }, 17);
             }
