@@ -2550,8 +2550,10 @@ MLBF.define('lib.Mobilebone', function(require) {
             // add controller 
             var tempController = [];
             $(domHtml).each(function() {
-                if ($(this).attr('mlbf-controller') && tempController.join(',').indexOf($(this).attr('mlbf-controller')) == -1 && initController.join(',').indexOf($(this).attr('mlbf-controller')) == -1) {
-                    initController.push($(this).attr('mlbf-controller'));
+                if ($(this).attr('mlbf-controller') && tempController.join(',').indexOf($(this).attr('mlbf-controller')) == -1) {
+                    if(initController.join(',').indexOf($(this).attr('mlbf-controller')) == -1) {
+                        initController.push($(this).attr('mlbf-controller'));
+                    }
                     tempController.push($(this).attr('mlbf-controller'));
                 }
             })
