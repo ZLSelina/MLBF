@@ -652,7 +652,7 @@ MLBF.define('lib.Mobilebone', function(require) {
             // add controller 
             var tempController = [];
             $(domHtml).each(function() {
-                if ($(this).attr('mlbf-controller') && tempController.join(',').indexOf($(this).attr('mlbf-controller')) == -1) {
+                if ($(this).attr('mlbf-controller') && tempController.join(',').indexOf($(this).attr('mlbf-controller')) == -1 && initController.join(',').indexOf($(this).attr('mlbf-controller')) == -1) {
                     initController.push($(this).attr('mlbf-controller'));
                     tempController.push($(this).attr('mlbf-controller'));
                 }
@@ -1142,15 +1142,6 @@ MLBF.define('lib.Mobilebone', function(require) {
                     }
                 })
 
-                var jsArrDep = [];
-
-                var jsArr = $('body').find('.page-js'),
-                    cssArr = $('body').find('.page-css');
-
-                jsArr.each(function() {
-                    jsArrDep.push($(this).attr('src'));
-                })
-
                 for (var i = 0; i < initController.length; i++) {
                     pageController[initController[i]] = MLBF.require(initController[i]);
                     pageControllerObj[initController[i]] = new pageController[initController[i]]();
@@ -1285,6 +1276,9 @@ MLBF.define('lib.Mobilebone', function(require) {
                     id = target.getAttribute("href");
 
                 if ((attr_reload == null || attr_reload == "false") && store[clean_url] && attr_cache != 'false') {
+                    // 解决slider返回被遮住的问题
+                    $('.slider img').css('zIndex', parseInt(Math.random(1) * 10));
+
                     if (back == false && rel == "auto") {
                         back = Mobilebone.isBack(store[clean_url], self_page);
                     }

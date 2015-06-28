@@ -1440,95 +1440,6 @@ MLBF.define('app.Controller', function(require) {
             }
 
             return this;
-        },
-
-        /**
-         * Set an attribute
-         * @method set
-         * @param {String} attr Attribute name
-         * @param {*} value
-         * @param {Object} options Other options for setter
-         * @param {Boolean} [options.silence=false] Silently set attribute without fire change event
-         * @chainable
-         */
-        set: function(attr, val, options) {
-            var attrs = this['_ATTRIBUTES'];
-
-            if (!attrs) {
-                attrs = this['_ATTRIBUTES'] = {};
-            }
-
-            if (typeof attr !== 'object') {
-                var oAttr = attrs[attr];
-                attrs[attr] = val;
-
-                // validate
-                if (!attrs) {
-                    // restore value
-                    attrs[attr] = oAttr;
-                } else {
-                    // trigger event only when value is changed and is not a silent setting
-                    if (val !== oAttr && (!options || !options.silence) && this.trigger) {
-                        /**
-                         * Fire when an attribute changed
-                         * Fire once for each change and trigger method is needed
-                         * @event change:attr
-                         * @param {Event} JQuery event
-                         * @param {Object} Current attributes
-                         */
-                        this.trigger('change:' + attr, [attrs[attr], oAttr]);
-
-                        /**
-                         * Fire when attribute changed
-                         * Fire once for each change and trigger method is needed
-                         * @event change
-                         * @param {Event} JQuery event
-                         * @param {Object} Current attributes
-                         */
-                        this.trigger('change', [attrs]);
-                    }
-                }
-
-                return this;
-            }
-
-            // set multiple attributes by passing in an object
-            // the 2nd arg is options in this case
-            options = val;
-
-            // plain merge
-            // so settings will only be merged plainly
-            var obj = extend({}, attrs, attr);
-
-            if (obj) {
-                this['_ATTRIBUTES'] = obj;
-                // change event
-                if ((!options || !options.silence) && this.trigger) {
-                    var changedCount = 0;
-                    for (var i in attr) {
-                        // has property and property changed
-                        if (attr.hasOwnProperty(i) && obj[i] !== attrs[i]) {
-                            changedCount++;
-                            this.trigger('change:' + i, [obj[i], attrs[i]]);
-                        }
-                    }
-
-                    // only any attribute is changed can trigger change event
-                    changedCount > 0 && this.trigger('change', [obj]);
-                }
-            }
-
-            return this;
-        },
-
-        /**
-         * Get attribute
-         * @method get
-         * @param {String} attr Attribute name
-         * @return {*}
-         */
-        get: function(attr) {
-            return !this['_ATTRIBUTES'] ? null : this['_ATTRIBUTES'][attr];
         }
     });
 });
@@ -2639,7 +2550,7 @@ MLBF.define('lib.Mobilebone', function(require) {
             // add controller 
             var tempController = [];
             $(domHtml).each(function() {
-                if ($(this).attr('mlbf-controller') && tempController.join(',').indexOf($(this).attr('mlbf-controller')) == -1) {
+                if ($(this).attr('mlbf-controller') && tempController.join(',').indexOf($(this).attr('mlbf-controller')) == -1 && initController.join(',').indexOf($(this).attr('mlbf-controller')) == -1) {
                     initController.push($(this).attr('mlbf-controller'));
                     tempController.push($(this).attr('mlbf-controller'));
                 }
@@ -3129,15 +3040,6 @@ MLBF.define('lib.Mobilebone', function(require) {
                     }
                 })
 
-                var jsArrDep = [];
-
-                var jsArr = $('body').find('.page-js'),
-                    cssArr = $('body').find('.page-css');
-
-                jsArr.each(function() {
-                    jsArrDep.push($(this).attr('src'));
-                })
-
                 for (var i = 0; i < initController.length; i++) {
                     pageController[initController[i]] = MLBF.require(initController[i]);
                     pageControllerObj[initController[i]] = new pageController[initController[i]]();
@@ -3272,6 +3174,9 @@ MLBF.define('lib.Mobilebone', function(require) {
                     id = target.getAttribute("href");
 
                 if ((attr_reload == null || attr_reload == "false") && store[clean_url] && attr_cache != 'false') {
+                    // 解决slider返回被遮住的问题
+                    $('.slider img').css('zIndex', parseInt(Math.random(1) * 10));
+
                     if (back == false && rel == "auto") {
                         back = Mobilebone.isBack(store[clean_url], self_page);
                     }
@@ -6608,222 +6513,6 @@ MLBF.define('util.isPlainObject', function(require, exports, module) {
 
         return key === undefined || hasOwn.call(obj, key);
     };
-});
-/**
- * @fileOverview
- * @author amoschen
- * @version
- * Created: 13-8-27 下午7:39
- */
-MLBF.define('util.localStorage', function(require) {
-    var Cookie = require('util.Cookie'),
-        $ = require('lib.Zepto');
-
-    var COOKIE_PREFIX = 'IELS';
-
-    // set expires to 100 years to fake permanent storage
-    var EXPIRES = 3153600000000;
-
-    var doc = document,
-
-        commonPattern = new RegExp('(?:^|[ ;])' + COOKIE_PREFIX + '[^=]+=([^;$])'),
-
-        keyPattern = function(key) {
-            return COOKIE_PREFIX + key;
-        },
-
-        explore = function(callback) {
-            var attributes = doc.cookie.split(';'),
-                i = 0,
-                length = attributes.length,
-                items = [],
-                match;
-
-            if (callback) {
-                for (; i < length; i++) {
-                    if (match = commonPattern.exec(attributes[i])) {
-                        items.push(match[1]);
-                        callback(match[1]);
-                    }
-                }
-            } else {
-                for (; i < length; i++) {
-                    (match = commonPattern.exec(attributes[i])) && items.push(match[1]);
-                }
-            }
-
-            return items;
-        };
-
-    /**
-     * LocalStorage with compatible solution for IE
-     * use cookie as IE solution
-     * user data in IE, because of secure concern, is limited to same dir which is not suitable for common uses
-     * Cautions:
-     *  Storage events haven't been add to compatible solution
-     *  Non-IE browser counts on window.localStorage only, it means this tool is useless to those old non-IE browsers
-     * @class localStorage
-     * @namespace util.localStorage
-     * @module util
-     */
-    return window.localStorage || {
-        /**
-         * The number of key/value pairs currently present in the list associated with the localStorage.
-         * @property length
-         * @static
-         */
-        length: explore().length,
-
-        /**
-         * Get the value of the nth key in the localStorage list
-         * @method key
-         * @static
-         * @param {Number} index Index of key
-         * @return {String | Null}
-         */
-        key: function(index) {
-            return explore()[index] || null;
-        },
-
-        /**
-         * Get the current value associated with the given key.
-         * @method getItem
-         * @static
-         * @param {String} key
-         * @return {String | Null}
-         */
-        getItem: function(key) {
-            return Cookie.get(keyPattern(key));
-        },
-
-        /**
-         * Set ( add/update ) value of the given key
-         * If it couldn't set the new value, the method must throw a QuotaExceededError exception.
-         * Setting could fail if, e.g., the user has disabled storage for the site, or if the quota has been exceeded.
-         * @method setItem
-         * @static
-         * @param {String} key
-         * @param {String} value
-         */
-        setItem: function(key, value) {
-            Cookie.set(keyPattern(key), value, null, '/', EXPIRES);
-            this.length = explore().length;
-        },
-
-        /**
-         * Remove the key/value pair with the given key
-         * @method removeItem
-         * @static
-         * @param {String} key
-         */
-        removeItem: function(key) {
-            Cookie.del(key);
-            this.length = explore().length;
-        },
-
-        /**
-         * Empty all key/value pairs
-         * @method clear
-         * @static
-         */
-        clear: function() {
-            this.length = explore(function(item) {
-                Cookie.del($.trim(item.split('=')[0]));
-            }).length;
-        }
-    };
-});
-/**
- * Created with JetBrains WebStorm.
- * User: honsytshen
- * Date: 13-9-9
- * Time: 下午7:45
- * To change this template use File | Settings | File Templates.
- */
-MLBF.define('util.sessionStorage', function(require) {
-    var localStorage = require('util.localStorage'),
-        cookie = require('util.Cookie');
-
-    //variable to check whether the session is alive
-    var SESSION_STORAGE_PRE = 'IESESSION';
-
-    /**
-     * get the domain aliveStatus
-     * @return {Boolean}
-     */
-    var getAliveStatus = function() {
-            return !!cookie.get(SESSION_STORAGE_PRE);
-        },
-
-        /**
-         * set the domain aliveStatus
-         * @param {String} value
-         */
-        setAliveStatus = function(value) {
-            cookie.set(SESSION_STORAGE_PRE, value, null, '/');
-        },
-
-        /**
-         * When this domain was dead, we clear all item in localStorage
-         * which is under this domain
-         */
-        clear = function() {
-            var pattern = new RegExp('^' + SESSION_STORAGE_PRE + '[\\S]+$'),
-                queue = [],
-                i = 0,
-                length = localStorage.length;
-
-            for (; i < length; i++) {
-                if (localStorage.key(i).match(pattern)) {
-                    queue.push(localStorage.key(i));
-                }
-            }
-
-            for (i = 0, length = queue.length; i < length; i++) {
-                localStorage.removeItem(queue[i]);
-            }
-        };
-
-    if (!getAliveStatus()) {
-        // set status to alive
-        setAliveStatus('alive');
-
-        // clear expired session data
-        clear();
-    }
-
-    return {
-        /**
-         * @method setItem
-         * Set a key-value item in localStorage
-         * @param {String} key
-         * @param {String} value
-         */
-        setItem: function(key, value) {
-            localStorage.setItem(SESSION_STORAGE_PRE + key, value);
-        },
-
-        /**
-         * @method getItem
-         * get a key-value item in localStorage which is in this domain
-         * @param {String} key
-         * @return {String}
-         */
-        getItem: function(key) {
-            return localStorage.getItem(SESSION_STORAGE_PRE + key);
-        },
-
-        /**
-         * @method removeItem
-         * remove a key-value item in localStorage which is in this domain
-         * @param {String} key
-         */
-        removeItem: function(key) {
-            localStorage.removeItem(SESSION_STORAGE_PRE + key);
-        },
-
-        clear: clear
-    }
 });
 /******************************************************************************
  * MLBF MVC 0.0.1 2015-05-26 

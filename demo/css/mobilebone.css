@@ -564,9 +564,9 @@ html, body, .page {
 
 .in {
 	-webkit-animation-timing-function: ease-out;
-	-webkit-animation-duration: 350ms;
+	-webkit-animation-duration: 250ms;
 	animation-timing-function: ease-out;
-	animation-duration: 350ms;
+	animation-duration: 250ms;
 }
 .out {
 	-webkit-animation-timing-function: ease-in;
