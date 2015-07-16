@@ -5,7 +5,8 @@
  * bone of switch for mobile web app 
  **/
 MLBF.define('lib.Mobilebone', function(require) {
-    var $ = require('lib.Zepto');
+    var $ = require('lib.Zepto'),
+        cookie = require('util.Cookie');
 
     var Mobilebone = (function() {
         var Mobilebone = {},
