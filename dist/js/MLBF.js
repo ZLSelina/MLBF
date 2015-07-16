@@ -1903,7 +1903,8 @@ MLBF.define('app.REST', function(require) {
  * bone of switch for mobile web app 
  **/
 MLBF.define('lib.Mobilebone', function(require) {
-    var $ = require('lib.Zepto');
+    var $ = require('lib.Zepto'),
+        cookie = require('util.Cookie');
 
     var Mobilebone = (function() {
         var Mobilebone = {},
@@ -2862,6 +2863,17 @@ MLBF.define('lib.Mobilebone', function(require) {
                 } else {
                     params.message = "The status code exception!";
                     params.error.call(params, xhr, xhr.status);
+
+                    if(xhr.status == 608) {
+                        var dialog = require('ui.dialog'); 
+                        if(dialog) {
+                            new dialog({
+                                content: JSON.parse(xhr.response).message,
+                                time: 3000,
+                                dialogType: 2
+                            })
+                        }
+                    }
                 }
 
                 params.complete.call(params, xhr, xhr.status);
