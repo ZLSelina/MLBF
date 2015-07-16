@@ -75,7 +75,7 @@ MLBF.define('app.REST', function(require) {
 
             params.headers = options.header || {
                 memberCode: cookie.get("memberCode") || '',
-                token: cookie.get("u_login_token")
+                token: cookie.get("u_login_token") || ''
             }
 
             // Ensure that we have the appropriate request data.

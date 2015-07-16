@@ -814,6 +814,10 @@ MLBF.define('lib.Mobilebone', function(require) {
                 dataType: "",
                 data: {},
                 timeout: 10000,
+                headers: {
+                    memberCode: cookie.get("memberCode") || '',
+                    token: cookie.get("u_login_token") || ''
+                },
                 async: true,
                 username: "",
                 password: "",
@@ -960,6 +964,17 @@ MLBF.define('lib.Mobilebone', function(require) {
                 } else {
                     params.message = "The status code exception!";
                     params.error.call(params, xhr, xhr.status);
+
+                    if(xhr.status == 608) {
+                        var dialog = require('ui.dialog'); 
+                        if(dialog) {
+                            new dialog({
+                                content: JSON.parse(xhr.response).message,
+                                time: 3000,
+                                dialogType: 2
+                            })
+                        }
+                    }
                 }
 
                 params.complete.call(params, xhr, xhr.status);
