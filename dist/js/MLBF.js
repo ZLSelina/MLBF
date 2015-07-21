@@ -2819,7 +2819,7 @@ MLBF.define('lib.Mobilebone', function(require) {
 
             // ajax request
             var xhr = new XMLHttpRequest();
-            xhr.open(params.type || "GET", params.url + (/\?/.test(params.url) ? "&" : "?") + "r=" + Date.now(), params.async, params.username, params.password);
+            xhr.open(params.type || "GET", params.url + (/\?/.test(params.url) ? "&" : "?") + "isAjax=" + Date.now(), params.async, params.username, params.password);
             xhr.timeout = params.timeout;
 
             xhr.onload = function() {
@@ -2865,13 +2865,9 @@ MLBF.define('lib.Mobilebone', function(require) {
                     params.error.call(params, xhr, xhr.status);
 
                     if(xhr.status == 608) {
-                        var dialog = require('ui.dialog'); 
-                        if(dialog) {
-                            new dialog({
-                                content: JSON.parse(xhr.response).message,
-                                time: 3000,
-                                dialogType: 2
-                            })
+                        var base = require('base'); 
+                        if(base) {
+                            base.restFail(JSON.parse(xhr.response))
                         }
                     }
                 }
