@@ -14,7 +14,7 @@ A solution for Mobile Web App. Integrated MV*, Seajs, Zepto and Mobilebone.
 
 or use bower to install:
 
-	// version 2.0.6
+	// version 2.0.7
     bower install MLBF
 
 ## Seajs
