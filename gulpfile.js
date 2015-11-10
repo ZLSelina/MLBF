@@ -33,7 +33,7 @@ gulp.task('scriptsDemo', function() {
     // gulp.src(['src/js/app/CMD.js', 'src/js/util/underscore.js', 
     //  'src/js/lib/Mobilebone.js', 'src/js/lib/Zepto.js', 'src/js/app/Model.js', 'src/js/app/Controller.js', 
     //  'src/js/util/template.js', 'src/js/util/defaults.js', 'src/js/util/Class.js'])
-    gulp.src(['src/js/app/*.js', 'src/js/lib/*.js', 'src/js/util/*.js', 'src/js/ui/*.js'])
+    gulp.src(['src/js/app/*.js', 'src/js/lib/*.js', 'src/js/lang/*.js', 'src/js/util/*.js', 'src/js/ui/*.js'])
         .pipe(concat('MLBF.js'))
         .pipe(gulp.dest('demo/js'));
 });

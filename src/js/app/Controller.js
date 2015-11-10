@@ -5,9 +5,10 @@
 
 MLBF.define('app.Controller', function(require) {
     var extend = require('util.extend'),
-        Zepto = require('lib.Zepto'),
+        $ = require('lib.Zepto'),
         template = require('lib.template'),
         _ = require('util.underscore'),
+        proxy = require('lang.proxy'),
         defaults = require('util.defaults'),
         Attribute = require('util.Attribute'),
         Class = require('util.Class');
@@ -72,13 +73,13 @@ MLBF.define('app.Controller', function(require) {
          * @method $
          * @uses lib.Zepto
          */
-        $: Zepto,
+        $: $,
 
         /**
          * @method Zepto
          * @uses lib.Zepto
          */
-        Zepto: Zepto,
+        Zepto: $,
 
         /**
          * @method template

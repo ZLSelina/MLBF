@@ -1,7 +1,7 @@
 {
-  "name": "m",
-  "version": "2.0.5",
-  "path": "m",
+  "name": "mlbf",
+  "version": "2.0.6",
+  "path": "mlbf",
   "devDependencies": {
     "connect": "^2.14.4",
     "connect-cgi-mock": "^1.0.1",
