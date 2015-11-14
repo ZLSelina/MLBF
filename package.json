@@ -1,6 +1,6 @@
 {
   "name": "mlbf",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "path": "mlbf",
   "devDependencies": {
     "connect": "^2.14.4",

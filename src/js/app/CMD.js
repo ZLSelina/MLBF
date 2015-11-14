@@ -1102,7 +1102,7 @@
     }
 
     Module.define.cmd = {}
-    global.define = Module.define
+    //global.define = Module.define
 
 
     // For Developers
