@@ -39,7 +39,7 @@ gulp.task('scriptsDemo', function() {
 });
 
 gulp.task('sassDemo', function() {
-    return gulp.src('src/css/*')
+    return gulp.src('src/css/*.css')
         .pipe(concat('mobilebone.css'))
         .pipe(gulp.dest('demo/css'));
 });

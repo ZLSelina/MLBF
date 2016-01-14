@@ -17,6 +17,8 @@ MLBF.define('app.REST', function(require) {
     //     CSRFPatch: require('app.RESTPlugins.CSRFPatch')
     // };
 
+    var plugins = {};
+
     // Map from CRUD to HTTP for our default sync implementation.
     var methodMap = {
         'create': 'POST',
@@ -72,26 +74,26 @@ MLBF.define('app.REST', function(require) {
 
             var ajaxHeaders = {};
 
-            // 微信银行
-            if(cookie.get("wx_uid")) {
-                ajaxHeaders = {
-                    uid: cookie.get("wx_uid") || '',
-                    token: cookie.get("wx_token") || ''
-                };
-            }
+            // // 微信银行
+            // if(cookie.get("wx_uid")) {
+            //     ajaxHeaders = {
+            //         uid: cookie.get("wx_uid") || '',
+            //         token: cookie.get("wx_token") || ''
+            //     };
+            // }
 
-            // 社区银行
-            if(cookie.get("memberCode")) {
-                ajaxHeaders = {
-                    memberCode: cookie.get("memberCode") || '',
-                    token: cookie.get("u_login_token") || ''
-                };
-            }
+            // // 社区银行
+            // if(cookie.get("memberCode")) {
+            //     ajaxHeaders = {
+            //         memberCode: cookie.get("memberCode") || '',
+            //         token: cookie.get("u_login_token") || ''
+            //     };
+            // }
 
             // Ensure that we have a URL.
             !options.url && urlError();
 
-            params.headers = options.header || ajaxHeaders;
+            params.headers = options.headers;
 
             // Ensure that we have the appropriate request data.
             if (contentType == 'application/json' &&

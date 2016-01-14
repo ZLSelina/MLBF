@@ -1503,6 +1503,8 @@ MLBF.define('app.REST', function(require) {
     //     CSRFPatch: require('app.RESTPlugins.CSRFPatch')
     // };
 
+    var plugins = {};
+
     // Map from CRUD to HTTP for our default sync implementation.
     var methodMap = {
         'create': 'POST',
@@ -1558,26 +1560,26 @@ MLBF.define('app.REST', function(require) {
 
             var ajaxHeaders = {};
 
-            // 微信银行
-            if(cookie.get("wx_uid")) {
-                ajaxHeaders = {
-                    uid: cookie.get("wx_uid") || '',
-                    token: cookie.get("wx_token") || ''
-                };
-            }
+            // // 微信银行
+            // if(cookie.get("wx_uid")) {
+            //     ajaxHeaders = {
+            //         uid: cookie.get("wx_uid") || '',
+            //         token: cookie.get("wx_token") || ''
+            //     };
+            // }
 
-            // 社区银行
-            if(cookie.get("memberCode")) {
-                ajaxHeaders = {
-                    memberCode: cookie.get("memberCode") || '',
-                    token: cookie.get("u_login_token") || ''
-                };
-            }
+            // // 社区银行
+            // if(cookie.get("memberCode")) {
+            //     ajaxHeaders = {
+            //         memberCode: cookie.get("memberCode") || '',
+            //         token: cookie.get("u_login_token") || ''
+            //     };
+            // }
 
             // Ensure that we have a URL.
             !options.url && urlError();
 
-            params.headers = options.header || ajaxHeaders;
+            params.headers = options.headers;
 
             // Ensure that we have the appropriate request data.
             if (contentType == 'application/json' &&
@@ -2585,11 +2587,11 @@ MLBF.define('lib.Mobilebone', function(require) {
                         script = document.createElement("script");
                     if (type) script.type = type;
                     script.appendChild(document.createTextNode(scriptContent));
-                    setTimeout(function() {
+                    //setTimeout(function() {
                         head.insertBefore(script, head.firstChild);
                         head.removeChild(script);
                         script = null;
-                    }, 17);
+                    //}, 17);
                     originScript = null;
                 });
             }
@@ -2642,12 +2644,12 @@ MLBF.define('lib.Mobilebone', function(require) {
                     MLBF.use($(this).attr('href'));
                 })
             } else {
-                setTimeout(function() {
+                //setTimeout(function() {
                     for (var i = 0; i < tempController.length; i++) {
                         pageController[tempController[i]] = MLBF.require(tempController[i]);
                         pageControllerObj[tempController[i]] = new pageController[tempController[i]]();
                     }
-                }, 17);
+                //}, 17);
             }
 
             // release memory

@@ -1503,6 +1503,8 @@ MLBF.define('app.REST', function(require) {
     //     CSRFPatch: require('app.RESTPlugins.CSRFPatch')
     // };
 
+    var plugins = {};
+
     // Map from CRUD to HTTP for our default sync implementation.
     var methodMap = {
         'create': 'POST',
@@ -1556,13 +1558,28 @@ MLBF.define('app.REST', function(require) {
                 dataType: 'json'
             };
 
+            var ajaxHeaders = {};
+
+            // // 微信银行
+            // if(cookie.get("wx_uid")) {
+            //     ajaxHeaders = {
+            //         uid: cookie.get("wx_uid") || '',
+            //         token: cookie.get("wx_token") || ''
+            //     };
+            // }
+
+            // // 社区银行
+            // if(cookie.get("memberCode")) {
+            //     ajaxHeaders = {
+            //         memberCode: cookie.get("memberCode") || '',
+            //         token: cookie.get("u_login_token") || ''
+            //     };
+            // }
+
             // Ensure that we have a URL.
             !options.url && urlError();
 
-            params.headers = options.header || {
-                memberCode: cookie.get("memberCode") || '',
-                token: cookie.get("u_login_token") || ''
-            }
+            params.headers = options.headers;
 
             // Ensure that we have the appropriate request data.
             if (contentType == 'application/json' &&
@@ -2707,6 +2724,24 @@ MLBF.define('lib.Mobilebone', function(require) {
         Mobilebone.ajax = function(aOrFormOrObj) {
             if (!aOrFormOrObj) return;
 
+            var ajaxHeaders = {};
+
+            // 微信银行
+            if(cookie.get("wx_uid")) {
+                ajaxHeaders = {
+                    uid: cookie.get("wx_uid") || '',
+                    token: cookie.get("wx_token") || ''
+                };
+            }
+
+            // 社区银行
+            if(cookie.get("memberCode")) {
+                ajaxHeaders = {
+                    memberCode: cookie.get("memberCode") || '',
+                    token: cookie.get("u_login_token") || ''
+                };
+            }
+
             // default params
             var defaults = {
                 url: "",
@@ -2714,10 +2749,7 @@ MLBF.define('lib.Mobilebone', function(require) {
                 dataType: "",
                 data: {},
                 timeout: 10000,
-                headers: {
-                    memberCode: cookie.get("memberCode") || '',
-                    token: cookie.get("u_login_token") || ''
-                },
+                headers: ajaxHeaders,
                 async: true,
                 username: "",
                 password: "",
