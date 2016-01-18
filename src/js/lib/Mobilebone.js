@@ -671,11 +671,11 @@ MLBF.define('lib.Mobilebone', function(require) {
                         script = document.createElement("script");
                     if (type) script.type = type;
                     script.appendChild(document.createTextNode(scriptContent));
-                    //setTimeout(function() {
+                    setTimeout(function() {
                         head.insertBefore(script, head.firstChild);
                         head.removeChild(script);
                         script = null;
-                    //}, 17);
+                    }, 17);
                     originScript = null;
                 });
             }
@@ -718,22 +718,24 @@ MLBF.define('lib.Mobilebone', function(require) {
                 })
 
                 MLBF.use(jsArrDep, function() {
-                    for (var i = 0; i < tempController.length; i++) {
-                        pageController[tempController[i]] = MLBF.require(tempController[i]);
-                        pageControllerObj[tempController[i]] = new pageController[tempController[i]]();
-                    }
+                    setTimeout(function() {
+                        for (var i = 0; i < tempController.length; i++) {
+                            pageController[tempController[i]] = MLBF.require(tempController[i]);
+                            pageControllerObj[tempController[i]] = new pageController[tempController[i]]();
+                        }
+                    }, 17);
                 });
 
                 cssArr.each(function() {
                     MLBF.use($(this).attr('href'));
                 })
             } else {
-                //setTimeout(function() {
+                setTimeout(function() {
                     for (var i = 0; i < tempController.length; i++) {
                         pageController[tempController[i]] = MLBF.require(tempController[i]);
                         pageControllerObj[tempController[i]] = new pageController[tempController[i]]();
                     }
-                //}, 17);
+                }, 17);
             }
 
             // release memory
@@ -1171,10 +1173,13 @@ MLBF.define('lib.Mobilebone', function(require) {
                     }
                 })
 
-                for (var i = 0; i < initController.length; i++) {
-                    pageController[initController[i]] = MLBF.require(initController[i]);
-                    pageControllerObj[initController[i]] = new pageController[initController[i]]();
-                }
+                setTimeout(function(){
+                    for (var i = 0; i < initController.length; i++) {
+                        pageController[initController[i]] = MLBF.require(initController[i]);
+                        pageControllerObj[initController[i]] = new pageController[initController[i]]();
+                    }
+                }, 17)
+
             };
 
         /**
