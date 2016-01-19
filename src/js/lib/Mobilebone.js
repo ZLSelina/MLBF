@@ -1173,12 +1173,10 @@ MLBF.define('lib.Mobilebone', function(require) {
                     }
                 })
 
-                setTimeout(function(){
-                    for (var i = 0; i < initController.length; i++) {
-                        pageController[initController[i]] = MLBF.require(initController[i]);
-                        pageControllerObj[initController[i]] = new pageController[initController[i]]();
-                    }
-                }, 17)
+                for (var i = 0; i < initController.length; i++) {
+                    pageController[initController[i]] = MLBF.require(initController[i]);
+                    pageControllerObj[initController[i]] = new pageController[initController[i]]();
+                }
 
             };
 

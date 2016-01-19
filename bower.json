@@ -1,11 +1,11 @@
 {
   "name": "MLBF",
   "homepage": "https://github.com/FroadUED/MLBF",
-  "version": "2.1.2",
-  "_release": "2.1.2",
+  "version": "2.1.3",
+  "_release": "2.1.3",
   "_resolution": {
     "type": "version",
-    "tag": "2.1.2",
+    "tag": "2.1.3",
     "commit": "a0413fa45f3dfb499ec228297d45f99e50e68bea"
   },
   "_source": "git://github.com/FroadUED/MLBF.git",
