@@ -114,6 +114,12 @@ MLBF.define('lib.Mobilebone', function(require) {
          **/
         Mobilebone.pushStateEnabled = true;
         /**
+         * todo when url changes when history changes
+         *
+         * @type function
+         **/
+        Mobilebone.changeHashCallBack = function() {};
+        /**
          * Whether excute JavaScript when ajax HTML loaded
          * If this value is true, the script will excute.
          *
@@ -421,6 +427,8 @@ MLBF.define('lib.Mobilebone', function(require) {
                     // if only pageIn, use 'replaceState'
                     history[pageOut ? "pushState" : "replaceState"](null, document.title, url_push.replace(/^#/, "#&"));
                 }
+
+                Mobilebone.changeHashCallBack();
 
                 // store page-id, just once
                 if (!store[pageid]) {

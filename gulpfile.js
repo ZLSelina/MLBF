@@ -83,7 +83,8 @@ gulp.task('watch', function() {
  */
 
 gulp.task('scriptsDist', function() {
-    return gulp.src(['demo/js/MLBF.js'])
+    return gulp.src(['src/js/app/*.js', 'src/js/lib/*.js', 'src/js/lang/*.js', 'src/js/util/*.js', 'src/js/ui/*.js'])
+        .pipe(concat('MLBF.js'))
         .pipe(gulp.dest('dist/js'))
         .pipe(rename({
             suffix: ".min"
@@ -93,7 +94,7 @@ gulp.task('scriptsDist', function() {
 });
 
 gulp.task('sassDist', function() {
-    return gulp.src('src/css/mobilebone.css')
+    return gulp.src('src/css/*.css')
         .pipe(gulp.dest('dist/css'))
         .pipe(rename({
             suffix: ".min"
