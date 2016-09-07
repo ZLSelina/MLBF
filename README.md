@@ -10,7 +10,7 @@ A solution for Mobile Web App. Integrated MV*, Seajs, Zepto and Mobilebone.
 
 ## Install
 
-	git clone https://github.com/aui/artTemplate.git
+	git clone https://github.com/FroadUED/MLBF.git
 
 or use bower to install:
 
