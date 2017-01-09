@@ -75,3 +75,6 @@ MLBF.define('DemoController', function(require, exports, module) {
 
     return DemoController;
 })
+
+var DemoController = MLBF.require('DemoController');
+new DemoController();

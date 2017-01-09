@@ -38,18 +38,18 @@ gulp.task('scriptsDemo', function() {
         .pipe(gulp.dest('demo/js'));
 });
 
-gulp.task('sassDemo', function() {
-    return gulp.src('src/css/*.css')
-        .pipe(concat('mobilebone.css'))
-        .pipe(gulp.dest('demo/css'));
-});
+// gulp.task('sassDemo', function() {
+//     return gulp.src('src/css/*.css')
+//         .pipe(concat('mobilebone.css'))
+//         .pipe(gulp.dest('demo/css'));
+// });
 
-gulp.task('imagesDemo', function() {
-    return gulp.src('src/images/*')
-        .pipe(gulp.dest('demo/images'));
-});
+// gulp.task('imagesDemo', function() {
+//     return gulp.src('src/images/*')
+//         .pipe(gulp.dest('demo/images'));
+// });
 
-gulp.task('buildDemo', ['scriptsDemo', 'sassDemo', 'imagesDemo']);
+gulp.task('buildDemo', ['scriptsDemo']);
 
 gulp.task('server', ['buildDemo', 'watch'], function() {
     connect.server({
@@ -70,8 +70,6 @@ gulp.task('server', ['buildDemo', 'watch'], function() {
 
 gulp.task('watch', function() {
     gulp.watch('src/js/**/*.js', ['scriptsDemo']);
-    gulp.watch('src/images/*.*', ['imagesDemo']);
-    gulp.watch('src/css/*.*', ['sassDemo']);
     var server = livereload();
     gulp.watch('demo/**/**').on('change', function(file) {
         server.changed(file.path);
@@ -93,19 +91,19 @@ gulp.task('scriptsDist', function() {
         .pipe(gulp.dest('dist/js'));
 });
 
-gulp.task('sassDist', function() {
-    return gulp.src('src/css/*.css')
-        .pipe(gulp.dest('dist/css'))
-        .pipe(rename({
-            suffix: ".min"
-        }))
-        .pipe(csso())
-        .pipe(gulp.dest('dist/css'));
-});
+// gulp.task('sassDist', function() {
+//     return gulp.src('src/css/*.css')
+//         .pipe(gulp.dest('dist/css'))
+//         .pipe(rename({
+//             suffix: ".min"
+//         }))
+//         .pipe(csso())
+//         .pipe(gulp.dest('dist/css'));
+// });
 
-gulp.task('imagesDist', function() {
-    return gulp.src('src/images/*')
-        .pipe(gulp.dest('dist/images'));
-});
+// gulp.task('imagesDist', function() {
+//     return gulp.src('src/images/*')
+//         .pipe(gulp.dest('dist/images'));
+// });
 
-gulp.task('buildDist', ['scriptsDist', 'sassDist', 'imagesDist']);
+gulp.task('buildDist', ['scriptsDist']);

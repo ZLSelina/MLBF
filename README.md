@@ -1,5 +1,5 @@
 # MLBF
-A solution for Mobile Web App. Integrated MV*, Seajs, Zepto and Mobilebone.
+A solution for Mobile Web App. Integrated MV*, Seajs, Zepto.
 
 ##	List
 
@@ -14,7 +14,7 @@ A solution for Mobile Web App. Integrated MV*, Seajs, Zepto and Mobilebone.
 
 or use bower to install:
 
-	// version 2.2.0
+	// version 3.0.0
     bower install MLBF
 
 ## Seajs
@@ -23,6 +23,10 @@ or use bower to install:
 	MLBF.define("appName", function(require, exports, module) {})
 	//require a module
 	MLBF.require("appName");
+
+Seajs has a bug in mobile:
+
+When use parseDependencies function, it weasts a lot of CPU.
 
 ## MV*
 
@@ -49,6 +53,6 @@ Use Restful rules, will have logger, speed modules.
 
 ## Mobilebone
 	
-Find all introductions in [mobilebone's github project](https://github.com/zhangxinxu/mobilebone).
+Find all introductions in [mobilebone's github project](https://github.com/zhangxinxu/mobilebone). From 3.0.0, I have removed Mobilebone.
 
 © ued@f-road.com.cn

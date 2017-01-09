@@ -1813,6 +1813,10 @@ MLBF.define('lib.Zepto', function(require) {
                     }
                 })
                 .on('touchstart MSPointerDown pointerdown', function(e) {
+                    if(!touch || !touch.el) {
+                        return;
+                    }
+                    
                     if ((_isPointerType = isPointerEventType(e, 'down')) &&
                         !isPrimaryTouch(e)) return
                     firstTouch = _isPointerType ? e : e.touches[0]
@@ -1836,6 +1840,10 @@ MLBF.define('lib.Zepto', function(require) {
                     if (gesture && _isPointerType) gesture.addPointer(e.pointerId);
                 })
                 .on('touchmove MSPointerMove pointermove', function(e) {
+                    if(!touch || !touch.el) {
+                        return;
+                    }
+
                     if ((_isPointerType = isPointerEventType(e, 'move')) &&
                         !isPrimaryTouch(e)) return
                     firstTouch = _isPointerType ? e : e.touches[0]
@@ -1847,6 +1855,10 @@ MLBF.define('lib.Zepto', function(require) {
                     deltaY += Math.abs(touch.y1 - touch.y2)
                 })
                 .on('touchend MSPointerUp pointerup', function(e) {
+                    if(!touch || !touch.el) {
+                        return;
+                    }
+
                     if ((_isPointerType = isPointerEventType(e, 'up')) &&
                         !isPrimaryTouch(e)) return
                     cancelLongTap()
@@ -1874,7 +1886,7 @@ MLBF.define('lib.Zepto', function(require) {
                                 // (cancelTouch cancels processing of single vs double taps for faster "tap" response)
                                 var event = $.Event("tap");
                                 //解决键盘挡住输入框报错信息看不到的问题 － 洪日
-                                if (touch.el[0].tagName !== "INPUT") {
+                                if (touch && touch.el && touch.el.length > 0 && touch.el[0].tagName !== "INPUT") {
                                     $("input").trigger("blur");
                                 }
                                 event.cancelTouch = cancelAll
