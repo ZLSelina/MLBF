@@ -1812,11 +1812,7 @@ MLBF.define('lib.Zepto', function(require) {
                         touch.el.trigger('swipe' + swipeDirectionFromVelocity)
                     }
                 })
-                .on('touchstart MSPointerDown pointerdown', function(e) {
-                    if(!touch || !touch.el) {
-                        return;
-                    }
-                    
+                .on('touchstart MSPointerDown pointerdown', function(e) {            
                     if ((_isPointerType = isPointerEventType(e, 'down')) &&
                         !isPrimaryTouch(e)) return
                     firstTouch = _isPointerType ? e : e.touches[0]
@@ -1840,10 +1836,6 @@ MLBF.define('lib.Zepto', function(require) {
                     if (gesture && _isPointerType) gesture.addPointer(e.pointerId);
                 })
                 .on('touchmove MSPointerMove pointermove', function(e) {
-                    if(!touch || !touch.el) {
-                        return;
-                    }
-
                     if ((_isPointerType = isPointerEventType(e, 'move')) &&
                         !isPrimaryTouch(e)) return
                     firstTouch = _isPointerType ? e : e.touches[0]
@@ -1854,11 +1846,7 @@ MLBF.define('lib.Zepto', function(require) {
                     deltaX += Math.abs(touch.x1 - touch.x2)
                     deltaY += Math.abs(touch.y1 - touch.y2)
                 })
-                .on('touchend MSPointerUp pointerup', function(e) {
-                    if(!touch || !touch.el) {
-                        return;
-                    }
-
+                .on('touchend MSPointerUp', function(e) {
                     if ((_isPointerType = isPointerEventType(e, 'up')) &&
                         !isPrimaryTouch(e)) return
                     cancelLongTap()

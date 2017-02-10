@@ -5,13 +5,14 @@
 
 MLBF.define('DemoController', function(require, exports, module) {
     var Controller = require('app.Controller'),
+        $ = require('lib.Zepto'),
         template = require('util.template');
 
     var DemoController = Controller.inherit({
         /**
          * controller scope
          */
-        selector: '#demoController',
+        selector: 'body',
 
         /**
          * this.$element
@@ -31,7 +32,8 @@ MLBF.define('DemoController', function(require, exports, module) {
          * @protected
          */
         events: {
-            'click .button input': 'testFunc'
+            'click .button input': 'testFunc',
+            'tap .testZepto': 'test2Func'
         },
 
         //run when init
@@ -51,6 +53,10 @@ MLBF.define('DemoController', function(require, exports, module) {
                 console.log('demo model attrs: ' + JSON.stringify(DemoModel.attributes()));
             }).fail();
             console.log('demo model attrs: ' + JSON.stringify(DemoModel.attributes()));
+            //console.log($("#test").size());
+            // $("#testZepto").on('tap', function(){
+            //     console.log(3);
+            // })
 
         },
 
@@ -70,6 +76,10 @@ MLBF.define('DemoController', function(require, exports, module) {
                 }
             });
             this.$result.html(html);
+        },
+
+        test2Func: function(el) {
+            console.log(2);
         }
     })
 
